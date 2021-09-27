@@ -1,0 +1,172 @@
+/*
+ * Hangman
+ *
+ * Bram Otten, 10992456, 18-11-2016
+ *
+ * The hangman game. Uses the HangmanCanvas and HangmanLexicon classes.
+ * The game only works well when TOTAL_GUESSES < 8. It features a split
+ * console/graphics(canvas) interface. The graphical part is not too cool.
+ * The console part does what it should do. I may be using instance variables
+ * too much, instead of giving methods parameters and accepting returns.
+ */
+
+import acm.graphics.*;
+import acm.program.*;
+import acm.util.*;
+import java.awt.*;
+import java.util.*;
+
+public class Hangman extends ConsoleProgram {
+    private static final int TOTAL_GUESSES = 8;
+
+    private HangmanCanvas canvas;
+    private HangmanLexicon lexicon;
+    private RandomGenerator rgen;
+    private String wordString;
+    private int wordLength;
+    private char[] wordLetters;
+    private char[] discoveredLetters;
+    private char guess;
+    private char[] previousGuesses;
+    private boolean won;
+    private int currentTry;
+
+    public void init() {
+        canvas = new HangmanCanvas();
+        add(canvas);
+        canvas.reset();
+
+        displayWelcomeConsole();
+
+        lexicon = new HangmanLexicon();
+        rgen = RandomGenerator.getInstance();
+        wordString = lexicon.getWord (rgen.nextInt(0, lexicon.getWordCount()));
+        wordLength = wordString.length();
+
+        wordLetters = new char[wordLength];
+        discoveredLetters = new char[wordLength];
+        for (int i = 0; i < wordLength; i++) {
+            wordLetters[i] = wordString.charAt(i);
+            discoveredLetters[i] = '_';
+        }
+
+        previousGuesses = new char[TOTAL_GUESSES];
+        won = false;
+        currentTry = 0;
+    }
+
+    public void run() {
+        while (currentTry < TOTAL_GUESSES && won == false) {
+            displayDiscoveredConsole();
+            displayDiscoveredCanvas();
+
+            askForGuess();
+
+            if (alreadyGuessedCorrectly()) {
+                println("You've already guessed "
+                    + guess + " successfully before.");
+            }
+
+            else {
+                boolean goodGuess = uncoverGuessedLetter();
+                if (goodGuess == false) currentTry++;
+                informUser(goodGuess);
+
+                won = Arrays.equals(wordLetters, discoveredLetters);
+            }
+        }
+
+        // because the last display came before the last guess
+        displayDiscoveredConsole();
+        displayDiscoveredCanvas();
+
+        if (won == true) {
+            displayWinMessage();
+        } else {
+            displayLoseMessage();
+        }
+    }
+
+    private void displayWelcomeConsole() {
+        println("Welcome to Hangman!");
+    }
+
+    private void displayDiscoveredConsole() {
+        print("The word now looks like this: ");
+
+        for (int i = 0; i < wordLength; i++) {
+            print(discoveredLetters[i]);
+            print(" ");
+        }
+        println();
+    }
+
+    private void displayDiscoveredCanvas() {
+        String discoveredString = "Your word: ";
+        for (int i = 0; i < wordLength; i++) {
+            discoveredString += discoveredLetters[i];
+            discoveredString += " ";
+        }
+        canvas.displayWord(discoveredString);
+    }
+
+    private void askForGuess() {
+        println("You have " + (TOTAL_GUESSES - currentTry)
+            + " guess(es) left.");
+        print("Your guess: ");
+
+        // accept input line if it's one letter, not very user-friendly
+        String guessString = readLine();
+        while (guessString.length() != 1 ||
+                    !Character.isLetter(guessString.charAt(0))) {
+            print("One letter please: ");
+            guessString = readLine();
+        }
+
+        guess = Character.toUpperCase(guessString.charAt(0));
+    }
+
+    private boolean alreadyGuessedCorrectly() {
+        for (int i = 0; i < wordLength; i++) {
+            if (discoveredLetters[i] == guess) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean uncoverGuessedLetter() {
+        boolean goodGuess = false;
+
+        for (int i = 0; i < wordLength; i++) {
+            if (wordLetters[i] == guess) {
+                discoveredLetters[i] = guess;
+                goodGuess = true; // no return yet to catch multiple occurrences
+            }
+        }
+
+        return goodGuess;
+    }
+
+    private void informUser(boolean goodGuess) {
+        if (goodGuess == true) {
+            println("That guess is correct.");
+        }
+
+        else {
+            println("There are no " + guess + "'s in the word.");
+            canvas.noteIncorrectGuess(guess);
+        }
+    }
+
+    private void displayLoseMessage() {
+        println("You're completely hung.");
+        println("The word was: " + wordString);
+        println("You lose.");
+    }
+
+    private void displayWinMessage() {
+        println("You guessed the word: " + wordString);
+        println("You win.");
+    }
+}

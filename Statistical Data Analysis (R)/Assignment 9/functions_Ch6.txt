@@ -1,0 +1,14 @@
+qlaplace <- function(y)
+{
+        q <- numeric(length(y))
+        smaller <- (y <= 0.5)
+        q[smaller] <- log(2. * y[smaller])
+        q[!smaller] <- log(2. * (1. - y[!smaller])) * (-1.)
+        q
+}
+
+
+rlaplace <- function(n)
+{
+        qlaplace(runif(n))
+}

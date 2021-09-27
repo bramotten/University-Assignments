@@ -1,0 +1,170 @@
+
+gdb --args ./bomb solution.txt
+
+b *0x0000000000400eb6
+b *0x0000000000400f9f ; b *0x0000000000400f8f
+b *0x0000000000400fa4
+
+>4;5? niet5? X X niet5? niet1;6?
+
+r13d is i in de for i < 6.
+
+ebx is j in de for j < 6, geinitialiseerd @ j = i.
+
+Len: 1 6 2 3 4 5
+Ik:  1 6 2/3/4/5 4/5 2/3/4/5 2/3/4/5
+ebp moet 5 zijn, is 1 de eerste keer @ 271. Gaat += 1 per keer door een vage loop. die begint @ 249. Die dus 5x overleven. Is weer gewoon door de getallen heen. $edx > *$rax.
+
+De eisen van de vorige loops waren dat de elementen moesten zijn: <6 en uniek. Dit keer weer een dict? b*0x0000000000400f4b  -- heeft iets te maken met <node>
+
+b *0x0000000000400f8f en dan continuen en x/3w $bx en x/3w $rax doen iedere keer. Iets met klein --> groot.
+
+0x0000000000400f89 <+249>:   mov    rax,QWORD PTR [rbx+0x8]
+0x0000000000400f8d <+253>:   mov    edx,DWORD PTR [rbx]    
+0x0000000000400f8f <+255>:   cmp    edx,DWORD PTR [rax]    
+
+Of AT&T:
+
+ 0x0000000000400f4b <+187>:   mov    (%rsp),%rbx           
+ 0x0000000000400f4f <+191>:   mov    0x8(%rsp),%rax        
+ 0x0000000000400f54 <+196>:   mov    %rax,0x8(%rbx)        
+ 0x0000000000400f58 <+200>:   mov    0x10(%rsp),%rdx       
+ 0x0000000000400f5d <+205>:   mov    %rdx,0x8(%rax)        
+ 0x0000000000400f61 <+209>:   mov    0x18(%rsp),%rax       
+ 0x0000000000400f66 <+214>:   mov    %rax,0x8(%rdx)        
+ 0x0000000000400f6a <+218>:   mov    0x20(%rsp),%rdx       
+ 0x0000000000400f6f <+223>:   mov    %rdx,0x8(%rax)        
+ 0x0000000000400f73 <+227>:   mov    0x28(%rsp),%rax       
+ 0x0000000000400f78 <+232>:   mov    %rax,0x8(%rdx)        
+ 0x0000000000400f7c <+236>:   movq   $0x0,0x8(%rax)        
+ 0x0000000000400f84 <+244>:   mov    $0x0,%ebp             
+ 0x0000000000400f89 <+249>:   mov    0x8(%rbx),%rax        
+ 0x0000000000400f8d <+253>:   mov    (%rbx),%edx           
+ 0x0000000000400f8f <+255>:   cmp    (%rax),%edx           
+ 0x0000000000400f91 <+257>:   jge    0x400f98 <phase_6+264>
+ 0x0000000000400f93 <+259>:   callq  0x4012e9 <explode_bomb
+ 0x0000000000400f98 <+264>:   mov    0x8(%rbx),%rbx        
+ 0x0000000000400f9c <+268>:   add    $0x1,%ebp             
+ 0x0000000000400f9f <+271>:   cmp    $0x5,%ebp             
+ 0x0000000000400fa2 <+274>:   jne    0x400f89 <phase_6+249>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-------------
+
+
+
+0x0000000000400f91 <+257>:   jge    0x400f98 <phase_6+264> 
+0x0000000000400f93 <+259>:   call   0x4012e9 <explode_bomb>   0x0000000000400e90 <+0>:		push   r13
+0x0000000000400f98 <+264>:   mov    rbx,QWORD PTR [rbx+0x8]   0x0000000000400e92 <+2>:		push   r12
+0x0000000000400f9c <+268>:   add    ebp,0x1                   0x0000000000400e94 <+4>:		push   rbp
+0x0000000000400f9f <+271>:   cmp    ebp,0x5                   0x0000000000400e95 <+5>:		push   rbx
+0x0000000000400fa2 <+274>:   jne    0x400f89 <phase_6+249>    0x0000000000400e96 <+6>:		sub    rsp,0x58								rsp -= 58
+   0x0000000000400e9a <+10>:	lea    r12,[rsp+0x30]						r12 = (rsp + 30)
+   0x0000000000400e9f <+15>:	mov    rsi,r12								rsi = r12
+   0x0000000000400ea2 <+18>:	call   0x40130b <read_six_numbers>			(if 6 numbers) (continue)
+   0x0000000000400ea7 <+23>:	mov    rbp,r12								rbp = r12
+   0x0000000000400eaa <+26>:	mov    r13d,0x0								r13d = 0
+   0x0000000000400eb0 <+32>:	mov    eax,DWORD PTR [rbp+0x0]				eax = rbp
+   0x0000000000400eb3 <+35>:	sub    eax,0x1								eax -= 1
+   0x0000000000400eb6 <+38>:	cmp    eax,0x5								
+   0x0000000000400eb9 <+41>:	jbe    0x400ec0 <phase_6+48>				if (eax =< 5) (goto +48)
+   0x0000000000400ebb <+43>:	call   0x4012e9 <explode_bomb>				
+   0x0000000000400ec0 <+48>:	add    r13d,0x1								r13d += 1
+   0x0000000000400ec4 <+52>:	cmp    r13d,0x6								# can't be equal 1st time, loop x times?
+   0x0000000000400ec8 <+56>:	je     0x400eec <phase_6+92>				if (r13d = 6) (goto +92)
+   0x0000000000400eca <+58>:	mov    ebx,r13d								ebx = r13d (= 1)
+   
+   																			# dit loopt altijd 5x
+   
+   0x0000000000400ecd <+61>:	movsxd rax,ebx								rax = ebx (MAAR DAN ALS WORD) (= 1)
+   0x0000000000400ed0 <+64>:	mov    edx,DWORD PTR [rbp+0x0]				edx = rbp
+   0x0000000000400ed3 <+67>:	cmp    edx,DWORD PTR [rsp+rax*4+0x30]		
+   0x0000000000400ed7 <+71>:	jne    0x400ede <phase_6+78>				if edx = (rsp + rax*4 + 30) (explode)
+   0x0000000000400ed9 <+73>:	call   0x4012e9 <explode_bomb>
+   0x0000000000400ede <+78>:	add    ebx,0x1								ebx += 1
+   0x0000000000400ee1 <+81>:	cmp    ebx,0x5								
+   0x0000000000400ee4 <+84>:	jle    0x400ecd <phase_6+61>				if (ebx => 5) (goto +61)
+   
+   
+   0x0000000000400ee6 <+86>:	add    rbp,0x4								rbp += 4
+   0x0000000000400eea <+90>:	jmp    0x400eb0 <phase_6+32>				(goto +32)
+   0x0000000000400eec <+92>:	lea    rcx,[rsp+0x48]						rcx = (rsp + 48)
+   0x0000000000400ef1 <+97>:	mov    edx,0x7								edx = 7
+   0x0000000000400ef6 <+102>:	mov    eax,edx								eax = edx (= 7)
+   0x0000000000400ef8 <+104>:	sub    eax,DWORD PTR [r12]					eax -= r12 (= rsp + 30) # zie +10
+   0x0000000000400efc <+108>:	mov    DWORD PTR [r12],eax					r12 = eax
+   0x0000000000400f00 <+112>:	add    r12,0x4								r12 += 4
+   0x0000000000400f04 <+116>:	cmp    r12,rcx								if r12 =/= rcx (goto +92) 
+   0x0000000000400f07 <+119>:	jne    0x400ef6 <phase_6+102>				(= input no. 2 maybe?)
+   0x0000000000400f09 <+121>:	mov    ebx,0x0								ebx = 0
+   0x0000000000400f0e <+126>:	lea    r8,[rsp+0x30]						r8 = rsp+30
+   0x0000000000400f13 <+131>:	mov    ebp,0x1								ebp = 1
+   0x0000000000400f18 <+136>:	mov    esi,0x603330							esi = 0x603330 (= 6304560 in deci)
+   0x0000000000400f1d <+141>:	mov    rdi,rsp								rdi = rsp
+   0x0000000000400f20 <+144>:	jmp    0x400f3b <phase_6+171>				(goto +171)
+   0x0000000000400f22 <+146>:	mov    rdx,QWORD PTR [rdx+0x8]				rdx = (rdx + 8)
+   0x0000000000400f26 <+150>:	add    eax,0x1								eax += 1
+   0x0000000000400f29 <+153>:	cmp    eax,ecx								if (eax =/= ecx) (goto +146)
+   0x0000000000400f2b <+155>:	jne    0x400f22 <phase_6+146>				
+   0x0000000000400f2d <+157>:	mov    QWORD PTR [rdi+rbx*2],rdx			rdi+rbx*2 = rdx
+   0x0000000000400f31 <+161>:	add    rbx,0x4								rbx += 4
+   0x0000000000400f35 <+165>:	cmp    rbx,0x18								if (rbx = 18) (goto +187)
+   0x0000000000400f39 <+169>:	je     0x400f4b <phase_6+187>
+   0x0000000000400f3b <+171>:	mov    ecx,DWORD PTR [r8+rbx*1]				ecx = (r8 + rbx)
+   0x0000000000400f3f <+175>:	mov    eax,ebp								eax = ebp
+   0x0000000000400f41 <+177>:	mov    rdx,rsi								rdx = rsi
+   0x0000000000400f44 <+180>:	cmp    ecx,0x1								if (ecx > 1) (goto +146)
+   0x0000000000400f47 <+183>:	jg     0x400f22 <phase_6+146>				
+   0x0000000000400f49 <+185>:	jmp    0x400f2d <phase_6+157>				(goto +157)
+   
+   
+   0x0000000000400f4b <+187>:	mov    rbx,QWORD PTR [rsp]					rbx = rsp
+   0x0000000000400f4f <+191>:	mov    rax,QWORD PTR [rsp+0x8]				rax = (rsp + 8)
+   0x0000000000400f54 <+196>:	mov    QWORD PTR [rbx+0x8],rax				(rbx + 8) = rax
+   0x0000000000400f58 <+200>:	mov    rdx,QWORD PTR [rsp+0x10]				rdx = (rsp + 10)
+   0x0000000000400f5d <+205>:	mov    QWORD PTR [rax+0x8],rdx				(rax + 8) = rdx
+   0x0000000000400f61 <+209>:	mov    rax,QWORD PTR [rsp+0x18]				rax = (rsp + 18)
+   0x0000000000400f66 <+214>:	mov    QWORD PTR [rdx+0x8],rax				(rdx + 8) = rax
+   0x0000000000400f6a <+218>:	mov    rdx,QWORD PTR [rsp+0x20]				rdx = (rsp + 20)
+   0x0000000000400f6f <+223>:	mov    QWORD PTR [rax+0x8],rdx				(rax + 8) = rdx
+   0x0000000000400f73 <+227>:	mov    rax,QWORD PTR [rsp+0x28]				rax = (rsp + 28)
+   0x0000000000400f78 <+232>:	mov    QWORD PTR [rdx+0x8],rax				(rdx + 8) = rax
+   0x0000000000400f7c <+236>:	mov    QWORD PTR [rax+0x8],0x0				(rax + 8) = 0
+   0x0000000000400f84 <+244>:	mov    ebp,0x0								ebp = 0
+   
+   
+   0x0000000000400f89 <+249>:	mov    rax,QWORD PTR [rbx+0x8]				rax = (rbx + 8)
+   0x0000000000400f8d <+253>:	mov    edx,DWORD PTR [rbx]					edx = rbx
+   0x0000000000400f8f <+255>:	cmp    edx,DWORD PTR [rax]					if (edx > rax) (goto +264)
+   0x0000000000400f91 <+257>:	jge    0x400f98 <phase_6+264>
+   0x0000000000400f93 <+259>:	call   0x4012e9 <explode_bomb>
+   0x0000000000400f98 <+264>:	mov    rbx,QWORD PTR [rbx+0x8]				rbx = (rbx + 8)
+   0x0000000000400f9c <+268>:	add    ebp,0x1								ebp += 1
+   0x0000000000400f9f <+271>:	cmp    ebp,0x5								if (ebp =/= 5) (goto +249)
+   0x0000000000400fa2 <+274>:	jne    0x400f89 <phase_6+249>
+   
+   
+   0x0000000000400fa4 <+276>:	add    rsp,0x58
+   0x0000000000400fa8 <+280>:	pop    rbx
+   0x0000000000400fa9 <+281>:	pop    rbp
+   0x0000000000400faa <+282>:	pop    r12
+   0x0000000000400fac <+284>:	pop    r13
+   0x0000000000400fae <+286>:	ret    
+
+
+
+
+

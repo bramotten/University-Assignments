@@ -1,0 +1,126 @@
+---
+title: "Assignment Week 4"
+output: html_document
+---
+
+### Name: H.C. (Bram) Otten
+
+### ULCN: s2330326
+
+```{r label = preps, echo = FALSE}
+rm(list = ls())
+set.seed(42)
+```
+
+### Exercise 1
+
+We are interested in the *inverse* of the function $f(x)=x\log(x)$. Unfortunately this inverse has no closed-form solution, so we'll need to resort to numerical methods.
+
+**(a)** Write a function that implements the inverse $f^{-1}$ of $f$ using the bisection method. It only has to work for the part of the function where $x\ge e$, where $e=2.71828\ldots$ To get suitable starting values, you can use the fact that if $x\log(x)=y$, then $x\in(e,y]$. Test your function by checking that the calculation of $f^{-1}(f(5))$ yields a result (close to) $5$. How many iterations are needed to obtain an accuracy of $10^{-6}$ in this test?
+
+```{r echo = TRUE}
+bisect_inverse <- function(f, a, b, eps, y, debug = FALSE) {
+  if (debug) n <- 0
+  g <- function(x) f(x) - y
+  while (b - a > eps) {
+    mid <- (a + b) / 2
+    if (debug) n <- n + 1
+    if (g(a) * g(mid) < 0) b <- mid else a <- mid
+  }
+  if (debug) print(paste("Number of iterations:", n))
+  return(mid)
+}
+
+f <- function(x) x * log(x)
+e <- exp(1)
+y <- 5
+# x is between e and y according to the question, so use those bounds
+eps <- 10^-6
+x <- bisect_inverse(f, e, y, eps, y, TRUE)
+x
+f(x)
+```
+
+**(b)** Implement the method of Newton-Raphson and test it for this same problem, i.e. to calculate the inverse of $f$ at $f(5)$. (The derivative of $f$ is $f'(x)=\log(x)+1$.) Choose starting value 10. How many iterations are needed to obtain accuracy $10^{-6}$?
+
+Be careful! We are considering the accuracy of the estimate of $x$, so we want to know after how many iterations $x$ is sufficiently close to $5$, *not* after how many iterations $f(x)$ is sufficiently close to $f(5)$.
+
+```{r echo = TRUE}
+newtraph_inverse <- function(f, df, x0, eps, debug = FALSE) {
+  if (debug) n <- 0
+  g <- function(x) f(x) - y
+  dg <- df
+  x <- x0
+  while (abs(g(x)) > eps) {
+    if (debug) n <- n + 1
+    x <- x - g(x) / dg(x)
+  }
+  if (debug) print(paste("Number of iterations:", n))
+  return(x)
+}
+
+df <- function(x) log(x) + 1
+x0 <- 10
+x <- newtraph_inverse(f, df, x0, eps, TRUE)
+x
+f(x)
+```
+
+Exercise 2
+--------------
+Look at the dataset `swiss` that's built into R. We wish to predict the column `Infant.Mortality` based on the other columns using ordinary least squares (OLS). The following code uses the machinery built into R to fit the parameters.
+
+```{r echo = TRUE}
+attach(swiss)
+model <- lm(Infant.Mortality ~ Fertility + Agriculture + Examination + Education + Catholic)
+detach(swiss)
+```
+
+The model predicts `Infant.Mortality` of each row as the inner product of the values in the other columns with the found coefficients, where the "intercept" coefficient applies to an imaginary row whose value is 1 everywhere.
+
+We can use techniques from linear algebra to find the OLS solution ourselves:
+
+**(a)** Define a matrix or data frame `X` whose first column is all ones, and whose subsequent columns are the columns for all the predictor variables in `swiss`. (That is, all columns from `swiss` except for `Infant.Mortality`.) Also define a vector or data frame `Y` that contains the `Infant.Mortality` column from the data set. Then fit the OLS coefficients $\hat\beta$ by hand, by using the formula
+
+$$\hat\beta=(X^TX)^{-1}X^TY.$$
+
+Check that the coefficients you find match the ones from the linear model.
+
+*Hint: `solve(A)` computes the inverse of a matrix A. For an overview of matrix operations see https://www.statmethods.net/advstats/matrix.html*
+
+```{r echo = TRUE}
+j <- which(names(swiss) == "Infant.Mortality")
+X <- data.matrix(cbind("(Intercept)" = 1, swiss[, -j]))
+dim(X)
+head(X)
+Y <- data.matrix(swiss[, j])
+Beta_hat_OLS <- solve(t(X) %*% X) %*% t(X) %*% Y
+cbind(Beta_hat_OLS, model$coefficients)  # does seem equal
+```
+
+**(b)** Instead of using the algebraic solution, now find the OLS coefficients by minimising the mean of squared errors (MSE) with respect to the coefficients $\beta$ using the built-in optimisation method `nlm`. Again check that the coefficients match what we found before. Note: the squared error for a row $i$ is the squared difference between $Y_i$ and the inner product between $X_i$ and $\beta$. The mean squared error is the average over all rows.
+
+```{r echo = TRUE}
+sqerf <- function(Beta, X, Y) mean((Y - X %*% Beta)^2)
+nlm_solve <- nlm(sqerf, rep(1, ncol(X)), X, Y)
+cbind(nlm_solve$minimum, sqerf(Beta_hat_OLS, X, Y))
+cbind(nlm_solve$estimate, Beta_hat_OLS)  # looks good
+```
+
+**(c)** Optimisation may have seemed overkill here, but it grants additional flexibility, because we can now easily change what function we are optimising. Instead of minimising the MSE, we can for example implement Lasso regression by adding L1-regularisation: find the coefficients that minimizing the function $\text{MSE}(\beta)+\lambda\|\beta\|_1$, where $\|\beta\|_1$ is the L1-norm: the sum of the absolute values of the coefficients. Use $\lambda=0.02$.
+
+```{r echo = TRUE}
+sqerf_L1_as_desc <- function(B, X, Y, l) mean((Y - X %*% B)^2) + l * sum(abs(B))
+nlm_solve_lasso_as_desc <- nlm(sqerf_L1_as_desc, rep(1, ncol(X)), X, Y, 0.02)
+cbind(nlm_solve$minimum, nlm_solve_lasso_as_desc$minimum)
+cbind(nlm_solve$estimate, nlm_solve_lasso_as_desc$estimate)
+```
+
+Lasso is supposed to have a larger MSE, but this is only a smaller first coefficient really. The predictions are actually _more_ varied than those of OLS now. It makes more sense (and is in accordance with the standard definition of lasso regression) to _not_ penalize that (Intercept) coefficient.
+
+```{r echo = TRUE}
+sqerf_L1 <- function(B, X, Y, l) mean((Y - X %*% B)^2) + l * sum(abs(B[-1]))
+nlm_solve_lasso <- nlm(sqerf_L1, rep(1, ncol(X)), X, Y, 0.02)
+cbind(nlm_solve$minimum, nlm_solve_lasso$minimum)
+cbind(nlm_solve$estimate, nlm_solve_lasso$estimate)
+```

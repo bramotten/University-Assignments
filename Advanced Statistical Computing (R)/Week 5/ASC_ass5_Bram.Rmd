@@ -1,0 +1,267 @@
+---
+title: "Assignment Week 5"
+output: html_document
+---
+
+### Name: H.C. (Bram) Otten
+
+### ULCN: s2330326
+
+```{r label = preps, echo = FALSE}
+rm(list = ls())
+set.seed(42)
+```
+
+### Exercise 1
+
+We will use the EM algorithm to estimate the parameters of a normal mixture model and study its behavior. Recall that $X$ follows a normal mixture distribution if it has density, 
+$$f(x; \theta) = \sum_{k = 1}^K w_k \phi(x; \mu_k, \sigma_k),$$
+where 
+
+* $\theta = (w_1, \dots, w_K, \mu_1, \sigma_1, \dots, \mu_K, \sigma_K)$ 
+is the vector of unknown parameters,
+* $\phi(\cdot; \mu, \sigma)$ is the density of a $\mathcal{N}(\mu, \sigma^2)$ random variable.
+
+Also keep in mind that there are constraints on the parameters:
+
+* $\sum_{k = 1}^K w_k = 1$ 
+* $\sigma_k > 0, 0 \le w_k \le 1$ for all $k = 1, \dots, K$.
+
+**(a)** Write a function `rmixt()` that simulates from a Gaussian mixture model.
+The function should take four arguments:
+
+* `n`: the number of samples to simulate,
+* `w`, `mu`, `sigma`: the model parameters (length `K` vectors).
+
+Verify that your function is correct by making a histogram of simulated data. 
+This function will be useful to check whether your solution of (c) is correct.
+
+**Solution**
+
+```{r echo = TRUE}
+rmixt <- function(n, w, mu, sigma) {
+  k <- sample(1:length(w), n, replace = TRUE, prob = w)
+  rnorm(n, mu[k], sigma[k])
+}
+
+w <- c(0.3, 0.7)
+mu <- c(-4, 1)
+sigma <- c(1, 1)
+mixture_samples <- rmixt(10^5, w, mu, sigma)
+hist(mixture_samples, prob = TRUE, breaks = 100)
+```
+
+The results look okay with large $n$, but this isn't the same as $f$ exactly: the samples are from distribution $N(\mu_i, \sigma_i)$ with probability $w_i$. (I.e., not that sum.)
+
+**(b)** Write a function `dmixt()` that computes the mixture density. It should 
+take the following arguments:
+
+* `x`: vector of evaluation points,
+* `w`, `mu`, `sigma`: the model parameters (length `K` vectors).
+
+Verify that your function is correct by plotting the density over a histogram of simulated data. 
+
+**Solution**
+
+```{r echo = TRUE}
+dmixt <- function(x, w, mu, sigma) {
+  n <- length(x)
+  p <- numeric(n)
+  for (i in 1:n) {
+    p[i] <- sum(w * dnorm(x[i], mu, sigma))
+  }
+  p
+}
+
+hist(mixture_samples, prob = TRUE, breaks = 100)
+x <- seq(-8, 5, length.out = 10^4)
+integrate(dmixt, -8, 5, w, mu, sigma) # ~ 1, check
+lines(x, dmixt(x, w, mu, sigma), col = "red")
+```
+
+
+**(c)** Write a function `fit_em()` that implements the EM algorithm for fitting 
+the Gaussian mixture parameters. The function should take four arguments
+
+* `x`: the data,
+* `w, mu, sigma`: initial guesses for parameters.
+
+It should return a matrix with columns `(w, mu, sigma)`.
+
+**Solution**
+
+```{r echo = TRUE}
+fit_em <- function(x, w, mu, sigma, approx) {
+  N <- length(x)
+  K <- length(w)
+  theta <- matrix(data = c(w, mu, sigma), nrow = K, ncol = 3)
+  repeat {
+    old_theta <- theta  # R makes this a copy, not a ref.
+    w <- theta[1:K, 1]
+    mu <- theta[1:K, 2]
+    sigma <- theta[1:K, 3]
+    
+    # Not really an E and M step because I use the approximations.
+    dm <- dmixt(x, w, mu, sigma)
+    p_i_k <- matrix(nrow = N, ncol = K)
+    for (k in 1:K){
+      p_i_k[,k] <- w[k] * dnorm(x, mu[k], sigma[k]) / dm
+    }
+
+    p_i_k_sums <- colSums(p_i_k)
+    for (k in 1:K) {
+      w[k] <- p_i_k_sums[k] / sum(p_i_k_sums)  
+      mu[k] <- sum(x * p_i_k[1:N, k]) / p_i_k_sums[k]
+      sigma[k] <- sqrt(sum((x - mu[k])^2 * p_i_k[1:N, k]) / p_i_k_sums[k])
+    }
+    
+    # Break
+    theta <- matrix(data = c(w, mu, sigma), nrow = K, ncol = 3)
+    diff <- norm(theta - old_theta, type = "O")
+    if (diff < approx) break
+  }
+  colnames(theta) <- c("w", "mu", "sigma")
+  theta
+}
+```
+
+```{r echo = TRUE}
+print("True:")
+matrix(data = c(w, mu, sigma), nrow = 2, ncol = 3)
+fit_em(mixture_samples, c(0.6, 0.4), c(-1, 3), c(1, 2), 0.0001)
+fit_em(mixture_samples, w, mu, sigma, 0.0001)
+```
+
+**(d)** 
+
+We will now investigate the role of the starting parameters. We will use the 
+following data:
+
+```{r echo = TRUE}
+set.seed(5)
+w_true <- c(0.2, 0.3, 0.5)
+mu_true <- c(0.5, 2, 4)
+sigma_true <- c(0.5, 1, 0.5)
+approx <- 0.0001
+n <- 1000  # default
+# n <- 10^5  # makes everything but method 2 do ~ perfectly in okay time
+X <- rmixt(n, w_true, mu_true, sigma_true)
+```
+
+Consider the following choices of initial guesses:
+
+1. `w <- w_true; mu <- mu_true; sigma <- sigma_true`.
+2. `w <- rep(1/3, 3); mu <- rep(mean(X), 3); sigma <- rep(sd(X), 3)`
+3. `w <- rep(1/3, 3); mu <- mean(X) + sd(X) * c(-1, 0, 1); sigma <- rep(sd(X), 3)`
+4. The group frequency/mean/SD where groups are computed via the k-means algorithm:
+``` r
+clusters <- kmeans(X, 3)$cluster
+w <- table(clusters) / length(X)
+mu <- tapply(X, clusters, mean)
+sigma <- tapply(X, clusters, sd)
+```
+
+For every choice of starting parameters, run the EM algorithm and 
+compare the estimated densities with a histogram. Which methods can you recommend 
+for practical use?
+
+**Solution**
+
+##### 1.
+
+```{r echo = TRUE}
+theta1 <- fit_em(X, w_true, mu_true, sigma_true, approx)
+theta1
+hist(X, prob = TRUE, breaks = 100, col = "blue")
+hist(rmixt(n, theta1[1:3, 1], theta1[1:3, 2], theta1[1:3, 3]),
+     breaks = 100, prob = TRUE, add = TRUE, col=rgb(1,0,0,0.5))
+```
+
+This method is not useful in practice (true parameters already known) but works perfectly. 
+
+##### 2.
+
+```{r echo = TRUE}
+theta2 <- fit_em(X, rep(1/3, 3), rep(mean(X), 3), rep(sd(X), 3), approx)
+theta2
+hist(X, prob = TRUE, breaks = 100, col = "blue")
+hist(rmixt(n, theta2[1:3, 1], theta2[1:3, 2], theta2[1:3, 3]),
+     breaks = 100, prob = TRUE, add = TRUE, col=rgb(1,0,0,0.5))
+```
+
+This method apparently messes up the (approximate solutions for the) EM algorithm -- we start off in a local minimum-like situation we can't get out of.
+
+##### 3. 
+```{r echo = TRUE}
+theta3 <- fit_em(X, rep(1/3, 3), rep(mean(X) + sd(X) * c(-1, 0, 1), 3), 
+                 rep(sd(X), 3), approx)
+theta3
+hist(X, prob = TRUE, breaks = 100, col = "blue")
+hist(rmixt(n, theta3[1:3, 1], theta3[1:3, 2], theta3[1:3, 3]),
+     breaks = 100, prob = TRUE, add = TRUE, col=rgb(1,0,0,0.5))
+```
+This method works well but is slow. Perhaps use if you expect the three mixed densities to be similar but with different means. 
+
+##### 4. 
+```{r echo = TRUE}
+clusters <- kmeans(X, 3)$cluster
+theta4 <- fit_em(X, table(clusters) / length(X), tapply(X, clusters, mean), 
+                 tapply(X, clusters, sd), approx)
+theta4
+hist(X, prob = TRUE, breaks = 100, col = "blue")
+hist(rmixt(n, theta4[1:3, 1], theta4[1:3, 2], theta4[1:3, 3]),
+     breaks = 100, prob = TRUE, add = TRUE, col=rgb(1,0,0,0.5))
+```
+
+This method works well in general but is slow.
+
+## Exercise 2
+
+Consider the following data:
+```{r echo = TRUE}
+set.seed(5)
+X <- rexp(500)
+Y <- 2 + 0.5 * X + rnorm(500)
+dat <- data.frame(Y, X)
+```
+We fit a linear model to this data and compute confidence intervals for both parameters:
+```{r echo = TRUE}
+fit <- lm(Y ~ X, data = dat)
+confint(fit)
+```
+Now implement a bootstrap algorithm to estimate 95%-confidence intervals for both 
+parameters. Compare your results to the confidence intervals above.
+
+**Solution:**
+
+```{r echo = TRUE}
+B <- 1000
+n <- dim(dat)[1]
+m <- dim(dat)[2]
+int_B <- X_B <- numeric(B)
+for (b in 1:B) {
+  c <- coef(lm(Y ~ X, data = dat[sample.int(n, replace = TRUE), 1:m]))
+  int_B[b] <- c[1]
+  X_B[b] <- c[2]
+}
+```
+
+
+```{r echo = TRUE}
+# Intercept 95%-CI bounds:
+unname(2 * coef(fit)[1] - quantile(int_B, c(.975, .025)))
+# X 95%-CI bounds:
+unname(2 * coef(fit)[2] - quantile(X_B, c(.975, .025)))
+```
+
+These bounds are a bit tighter than those reported by `confint`. The help-file of that function says its default method "assumes normality". Let's just try `boot` to get all kinds of CIs:
+
+```{r echo = TRUE}
+library(boot)
+f <- function(data, index) coef(lm(Y ~ X, data = dat[index, 1:m]))
+int_boot <- boot(dat, function(d, i) f(d, i)[1], R = 1000)
+boot.ci(int_boot)
+X_boot <- boot(dat, function(d, i) f(d, i)[2], R = 1000)
+boot.ci(X_boot)
+```
+

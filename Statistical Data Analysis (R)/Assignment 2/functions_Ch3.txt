@@ -1,0 +1,188 @@
+qlaplace <- function(y)
+{
+        q <- numeric(length(y))
+        smaller <- (y <= 0.5)
+        q[smaller] <- log(2. * y[smaller])
+        q[!smaller] <- log(2. * (1. - y[!smaller])) * (-1.)
+        q
+}
+
+qqlaplace <- function(x, datax = FALSE, plot.it = TRUE, xlab = "Quantiles of Laplace", ylab = "Sorted Data", main="Laplace Q-Q Plot",...)
+{
+        y <- # rid of NAs, too
+        sort(x)
+        x <- qlaplace(ppoints(y))
+        if(plot.it) {
+                if(datax)
+                        plot(x = y, y = x, xlab = ylab, ylab = xlab,main=main,...)
+                else plot(x, y, xlab = xlab, ylab = ylab,main=main,...)
+        }
+        else {
+                if(datax)
+                        list(x = y, y = x)
+                else list(x = x, y = y)
+        }
+}
+
+qqcauchy <- function(x, datax = FALSE, plot.it = TRUE, xlab = "Quantiles of Cauchy", ylab = "Sorted Data", main="Cauchy Q-Q Plot",...)
+{
+        y <- # rid of NAs, too
+        sort(x)
+        x <- qcauchy(ppoints(y))
+        if(plot.it) {
+                if(datax)
+                        plot(x = y, y = x, xlab = ylab, ylab = xlab, main=main,...)
+                else plot(x, y, xlab = xlab, ylab = ylab, main=main, ...)
+        }
+        else {
+                if(datax)
+                        list(x = y, y = x)
+                else list(x = x, y = y)
+        }
+}
+
+
+qqchisq <- function(x, datax = FALSE, plot.it = TRUE, xlab = "Quantiles of Chisquare", ylab = "Sorted Data", main="Chi^2 Q-Q Plot, df=",df, ...)
+{
+        y <- # rid of NAs, too
+        sort(x)
+        x <- qchisq(ppoints(y), df)
+        if(plot.it) {
+                if(datax)
+                        plot(x = y, y = x, xlab = ylab, ylab = xlab, main=paste(main,df),...)
+                else plot(x, y, xlab = xlab, ylab = ylab, main=paste(main,df),...)
+        }
+        else {
+                if(datax)
+                        list(x = y, y = x)
+                else list(x = x, y = y)
+        }
+}
+
+qqexp <- function(x, datax = FALSE, plot.it = TRUE, xlab = "Quantiles of Exp", ylab = "Sorted Data", main="Exp Q-Q Plot",...)
+{
+        y <- # rid of NAs, too
+        sort(x)
+        x <- qexp(ppoints(y))
+        if(plot.it) {
+                if(datax)
+                        plot(x = y, y = x, xlab = ylab, ylab = xlab, main=main,...)
+                else plot(x, y, xlab = xlab, ylab = ylab,main=main, ...)
+        }
+        else {
+                if(datax)
+                        list(x = y, y = x)
+                else list(x = x, y = y)
+        }
+}
+
+qqlnorm <- function(x, datax = FALSE, plot.it = TRUE, xlab = "Quantiles of Lnorm", ylab = "Sorted Data", main="Lognorm Q-Q Plot",meanlog = 0., sdlog = 1., ...)
+{
+        y <- # rid of NAs, too
+        sort(x)
+        x <- qlnorm(ppoints(y), meanlog, sdlog)
+        if(plot.it) {
+                if(datax)
+                        plot(x = y, y = x, xlab = ylab, ylab = xlab,main=main, ...)
+                else plot(x, y, xlab = xlab, ylab = ylab, main=main,...)
+        }
+        else {
+                if(datax)
+                        list(x = y, y = x)
+                else list(x = x, y = y)
+        }
+}
+
+qqlogis <- function(x, datax = FALSE, plot.it = TRUE, xlab = "Quantiles of Logistic", ylab = "Sorted Data", main="Logistic Q-Q Plot",...)
+{
+        y <- # rid of NAs, too
+        sort(x)
+        x <- qlogis(ppoints(y))
+        if(plot.it) {
+                if(datax)
+                        plot(x = y, y = x, xlab = ylab, ylab = xlab, main=main,...)
+                else plot(x, y, xlab = xlab, ylab = ylab, main=main,...)
+        }
+        else {
+                if(datax)
+                        list(x = y, y = x)
+                else list(x = x, y = y)
+        }
+}
+
+qqunif <- function(x, datax = FALSE, plot.it = TRUE, xlab = "Quantiles of Uniform", ylab = "Sorted Data",main="Uniform Q-Q Plot",...)
+{
+          y <- # rid of NAs, too
+          sort(x)
+          x <- qunif(ppoints(y))
+          if(plot.it) {
+                  if(datax)
+                          plot(x = y, y = x, xlab = ylab, ylab = xlab,main=main...)
+                  else plot(x, y, xlab = xlab, ylab = ylab,main=main, ...)
+          }
+          else {
+                  if(datax)
+                          list(x = y, y = x)
+                  else list(x = x, y = y)
+          }
+}
+
+
+qqt <- function(x, datax = FALSE, plot.it = TRUE, xlab = "Quantiles of t", ylab = "Sorted Data",main="t Q-Q Plot, df=", df, ...)
+{
+        y <- # rid of NAs, too
+        sort(x)
+        x <- qt(ppoints(y), df)
+        if(plot.it) {
+                if(datax)
+                        plot(x = y, y = x, xlab = ylab, ylab = xlab, main=paste(main,df),...)
+                else plot(x, y, xlab = xlab, ylab = ylab, main=paste(main,df),...)
+        }
+        else {
+                if(datax)
+                        list(x = y, y = x)
+                else list(x = x, y = y)
+        }
+}
+
+
+symplot =  function(x,...)      {        n = length(x)        n2 = n %/% 2        sx = sort(x)        mx = median(x)        plot(mx - sx[1:n2], rev(sx)[1:n2] - mx,             xlab = "Distance Below Median",             ylab = "Distance Above Median",...)        abline(a = 0, b = 1, lty = "dotted")      }
+
+
+chisquare  <-  function(x, pdist, k=0, lb=0, ub=0, breaks, ...)
+{
+	# chisquare test for goodness of fit for data vector x and
+	# null hypothesis dist based on a partition of the interval (lb,ub] in k
+	# bins of equal width, or a partition prescribed by breaks.
+	# parameters of pdist can be included on ...
+        # output: list with components
+	#        chi: value of chisquare test statistic
+	#         pr: right-hand p-value for one-sided test for chi with
+	#             k-1 d.f.
+	#          N: vector of #observations per bin.
+        #         np: vector of expected number of observations 
+        #             per bin under null hypothesis (rounded to integer part)
+        #
+        n <- length(x)
+        if(missing(breaks))
+                b <- lb + ((0.:k) * (ub - lb))/k
+        else {
+                b <- breaks
+                k <- length(breaks) - 1.
+        }
+        N <- table(cut(x, b))
+        q <- pdist(b, ...)
+        p <- diff(q)
+        chi <- sum(((N - n * p)^2.)/(n * p))
+        pr <- 1. - pchisq(chi, k - 1.)
+        np <- n * p
+        y <- list(chi, pr, N,np)
+        names(y) <- c("chisquare", "pr", "N","np")
+        y
+}
+
+
+
+
+
+

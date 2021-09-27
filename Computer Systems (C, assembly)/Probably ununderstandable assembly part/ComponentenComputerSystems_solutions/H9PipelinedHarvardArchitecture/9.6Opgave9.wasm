@@ -1,0 +1,31 @@
+@include "PipelinedHarvard.wasm"
+# Add 5 values stored in memory locations 2..6 and store the result in
+# the first free location(7)
+
+# Store 0d10 in address 0d5, 0d11 in address 0d6, etc.
+.data MyData : DATAMEM
+0x10: 	WORD start     0x01 
+       	WORD           0x02
+	WORD           0x03
+       	WORD           0x04
+	WORD           0x05
+	WORD           0x00
+0x20:	WORD dest
+
+.data MyRegisters: REGISTERS
+0x00: WORD index 0
+0x01: WORD temp
+
+.code MyCode  : HARVARD, MyData, MyRegisters
+loop:
+	LW temp, start, index
+	NOP
+	NOP
+	SW temp, dest, index
+	ADDI index, index, 1
+	NOP
+	BNZ temp, loop
+
+
+HALT
+

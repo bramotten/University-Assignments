@@ -1,0 +1,63 @@
+mhuber <- function(x, b = 1.35, scale = mad(x), precision = 0.01)
+{
+        # Value is the Huber estimator for location.
+        # This is approximated by means of Newton-Raphson iteration.
+        sumpsi <- function(y, b)
+        {
+                y[y >= b] <- b
+                y[y <= (-b)] <- (-b)
+                sum(y)
+        }
+        sumpsip <- function(y, b)
+        {
+                sum((y <= b & y >= (-b)))
+        }
+        s <- scale
+        precision <- precision/s
+        m <- median(x)
+        sameside <- TRUE
+        y <- (x - m)/s
+        u <- sumpsi(y, b)
+        while(sameside) {
+                m <- m + (s * u)/sumpsip(y, b)
+                y <- (x - m)/s
+                u <- sumpsi(y, b)
+                if(u > 0.)
+                        v <- sumpsi(y - precision, b)
+                else v <- sumpsi(y + precision, b)
+                sameside <- (u * v > 0.)
+        }
+        m
+}
+
+
+
+mlogis <- function(x, scale = mad(x), precision = 0.001)
+{
+        # Value is the M estimator for location of the
+	# logistic distribution
+	#
+        sumpsi <- function(y)
+        {
+                sum((2. * plogis(y)) - 1.)
+        }
+        sumpsip <- function(y)
+        {
+                2. * sum(dlogis(y))
+        }
+        s <- scale
+        m <- median(x)
+        sameside <- TRUE
+        y <- (x - m)/s
+        u <- sumpsi(y)
+        while(sameside) {
+                m <- m + (s * u)/sumpsip(y)
+                y <- (x - m)/s
+                u <- sumpsi(y)
+                if(u > 0.)
+                        v <- sumpsi(y - precision)
+                else v <- sumpsi(y + precision)
+                sameside <- (u * v > 0.)
+        }
+        m
+}

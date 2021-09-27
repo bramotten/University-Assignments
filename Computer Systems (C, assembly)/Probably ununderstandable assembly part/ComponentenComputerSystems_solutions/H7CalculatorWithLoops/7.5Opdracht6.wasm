@@ -1,0 +1,23 @@
+@include "CalculatorWithLoops.wasm"
+# Vermenigvuldiging: 9 * 5 door herhaald optellen
+
+.data MyRegisters  : REGISTERS
+0x00: WORD result
+0x06: WORD b
+0x07: WORD z 0    # set value 0
+
+.code MyCode : LOOPS_MACHINE, MyRegisters
+LOADI b, 5
+LOADI result, 0
+
+
+loop:
+  ADDI result, result, 9
+  SUBI b, b, 1
+  BNE  b, z, loop
+ 
+HALT
+
+
+
+

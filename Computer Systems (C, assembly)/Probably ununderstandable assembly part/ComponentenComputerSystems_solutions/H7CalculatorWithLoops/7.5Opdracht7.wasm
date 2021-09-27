@@ -1,0 +1,21 @@
+@include "CalculatorWithLoops.wasm"
+# Compare 2 values stored in registers a & b  
+# if a > b, restore them in ascending order.
+
+.code MyRegisters  : REGISTERS
+0x1: WORD a 15
+0x2: WORD b 13
+0x3: WORD a_min_b 
+0x4: WORD temp
+
+.code MyCode  : LOOPS_MACHINE, MyRegisters
+SUB  a_min_b, a, b		# subtract to compare
+ANDI temp, a_min_b, 0x8000 	# bit mask of last bit
+BNZ  temp, end		# if last bit is 1 (negative) goto end
+COPY temp, a		# else switch: remember value of a
+COPY a, b			#              a gets value of b
+COPY b, temp		#              b gets old value of a
+
+end: HALT
+
+

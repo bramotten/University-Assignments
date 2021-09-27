@@ -1,0 +1,1640 @@
+%PDF-1.4
+%“Œ‹ž ReportLab Generated PDF document http://www.reportlab.com
+1 0 obj
+<<
+/F1 2 0 R /F2 3 0 R /F3 4 0 R
+>>
+endobj
+2 0 obj
+<<
+/BaseFont /Helvetica /Encoding /WinAnsiEncoding /Name /F1 /Subtype /Type1 /Type /Font
+>>
+endobj
+3 0 obj
+<<
+/BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding /Name /F2 /Subtype /Type1 /Type /Font
+>>
+endobj
+4 0 obj
+<<
+/BaseFont /Courier /Encoding /WinAnsiEncoding /Name /F3 /Subtype /Type1 /Type /Font
+>>
+endobj
+5 0 obj
+<<
+/Contents 26 0 R /MediaBox [ 0 0 595.2756 841.8898 ] /Parent 25 0 R /Resources <<
+/Font 1 0 R /ProcSet [ /PDF /Text /ImageB /ImageC /ImageI ]
+>> /Rotate 0 /Trans <<
+
+>> 
+  /Type /Page
+>>
+endobj
+6 0 obj
+<<
+/Border [ 0 0 0 ] /Contents () /Dest [ 14 0 R /XYZ 68.69291 738.6772 0 ] /Rect [ 244.744 170.4236 249.192 182.4236 ] /Subtype /Link /Type /Annot
+>>
+endobj
+7 0 obj
+<<
+/Annots [ 6 0 R ] /Contents 27 0 R /MediaBox [ 0 0 595.2756 841.8898 ] /Parent 25 0 R /Resources <<
+/Font 1 0 R /ProcSet [ /PDF /Text /ImageB /ImageC /ImageI ]
+>> /Rotate 0 
+  /Trans <<
+
+>> /Type /Page
+>>
+endobj
+8 0 obj
+<<
+/A <<
+/S /URI /Type /Action /URI (https://en.wikipedia.org/wiki/Heap_\(data_structure)
+>> /Border [ 0 0 0 ] /Rect [ 112.3729 195.0236 333.5729 207.0236 ] /Subtype /Link /Type /Annot
+>>
+endobj
+9 0 obj
+<<
+/A <<
+/S /URI /Type /Action /URI (https://en.wikipedia.org/wiki/Heapsort)
+>> /Border [ 0 0 0 ] /Rect [ 85.69291 159.7736 250.7529 171.7736 ] /Subtype /Link /Type /Annot
+>>
+endobj
+10 0 obj
+<<
+/A <<
+/S /URI /Type /Action /URI (https://www.geeksforgeeks.org/heap-sort/)
+>> /Border [ 0 0 0 ] /Rect [ 85.69291 141.7736 270.2129 153.7736 ] /Subtype /Link /Type /Annot
+>>
+endobj
+11 0 obj
+<<
+/Annots [ 8 0 R 9 0 R 10 0 R ] /Contents 28 0 R /MediaBox [ 0 0 595.2756 841.8898 ] /Parent 25 0 R /Resources <<
+/Font 1 0 R /ProcSet [ /PDF /Text /ImageB /ImageC /ImageI ]
+>> /Rotate 0 
+  /Trans <<
+
+>> /Type /Page
+>>
+endobj
+12 0 obj
+<<
+/Border [ 0 0 0 ] /Contents () /Dest [ 7 0 R /XYZ 237.7529 184.4236 0 ] /Rect [ 68.69291 724.6772 74.25291 736.6772 ] /Subtype /Link /Type /Annot
+>>
+endobj
+13 0 obj
+<<
+/A <<
+/S /URI /Type /Action /URI (http://bfy.tw/Gdfn)
+>> /Border [ 0 0 0 ] /Rect [ 153.7323 725.4272 229.3323 737.4272 ] /Subtype /Link /Type /Annot
+>>
+endobj
+14 0 obj
+<<
+/Annots [ 12 0 R 13 0 R ] /Contents 29 0 R /MediaBox [ 0 0 595.2756 841.8898 ] /Parent 25 0 R /Resources <<
+/Font 1 0 R /ProcSet [ /PDF /Text /ImageB /ImageC /ImageI ]
+>> /Rotate 0 
+  /Trans <<
+
+>> /Type /Page
+>>
+endobj
+15 0 obj
+<<
+/Outlines 17 0 R /PageLabels 30 0 R /PageMode /UseNone /Pages 25 0 R /Type /Catalog
+>>
+endobj
+16 0 obj
+<<
+/Author () /CreationDate (D:20180228080842-01'00') /Creator (\(unspecified\)) /Keywords () /ModDate (D:20180228080842-01'00') /Producer (ReportLab PDF Library - www.reportlab.com) 
+  /Subject (\(unspecified\)) /Title (Assignment 4: Heap Sort) /Trapped /False
+>>
+endobj
+17 0 obj
+<<
+/Count 7 /First 18 0 R /Last 24 0 R /Type /Outlines
+>>
+endobj
+18 0 obj
+<<
+/Dest [ 5 0 R /XYZ 62.69291 689.0236 0 ] /Next 19 0 R /Parent 17 0 R /Title (Objectives)
+>>
+endobj
+19 0 obj
+<<
+/Dest [ 5 0 R /XYZ 62.69291 638.0236 0 ] /Next 20 0 R /Parent 17 0 R /Prev 18 0 R /Title (Requirements)
+>>
+endobj
+20 0 obj
+<<
+/Dest [ 7 0 R /XYZ 62.69291 425.8236 0 ] /Next 21 0 R /Parent 17 0 R /Prev 19 0 R /Title (Details on the input and output formats)
+>>
+endobj
+21 0 obj
+<<
+/Dest [ 7 0 R /XYZ 62.69291 146.4236 0 ] /Next 22 0 R /Parent 17 0 R /Prev 20 0 R /Title (Getting started)
+>>
+endobj
+22 0 obj
+<<
+/Dest [ 11 0 R /XYZ 62.69291 669.0236 0 ] /Next 23 0 R /Parent 17 0 R /Prev 21 0 R /Title (Testing)
+>>
+endobj
+23 0 obj
+<<
+/Dest [ 11 0 R /XYZ 62.69291 576.0236 0 ] /Next 24 0 R /Parent 17 0 R /Prev 22 0 R /Title (Grading)
+>>
+endobj
+24 0 obj
+<<
+/Dest [ 11 0 R /XYZ 62.69291 243.0236 0 ] /Parent 17 0 R /Prev 23 0 R /Title (See also)
+>>
+endobj
+25 0 obj
+<<
+/Count 4 /Kids [ 5 0 R 7 0 R 11 0 R 14 0 R ] /Type /Pages
+>>
+endobj
+26 0 obj
+<<
+/Length 9212
+>>
+stream
+1 0 0 1 0 0 cm  BT /F1 12 Tf 14.4 TL ET
+q
+1 0 0 1 62.69291 741.0236 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 4 Tm /F2 20 Tf 24 TL 116.0349 0 Td (Assignment 4: Heap Sort) Tj T* -116.0349 0 Td ET
+Q
+Q
+q
+1 0 0 1 62.69291 716.0236 cm
+0 0 0 rg
+BT /F1 10 Tf 12 TL ET
+q
+1 0 0 1 6 3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 2 Tm /F2 10 Tf 12 TL 48.03937 0 Td (Date:) Tj T* -48.03937 0 Td ET
+Q
+Q
+q
+1 0 0 1 91.03937 3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 2 Tm /F1 10 Tf 12 TL (Februari 28th 2018) Tj T* ET
+Q
+Q
+q
+Q
+Q
+q
+1 0 0 1 62.69291 701.0236 cm
+0 0 0 rg
+BT /F1 10 Tf 12 TL ET
+q
+1 0 0 1 6 3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 2 Tm /F2 10 Tf 12 TL 28.02937 0 Td (Deadline:) Tj T* -28.02937 0 Td ET
+Q
+Q
+q
+1 0 0 1 91.03937 3 cm
+q
+BT 1 0 0 1 0 2 Tm 12 TL /F1 10 Tf 0 0 0 rg (March 7th 2018 23:59) Tj T* ET
+Q
+Q
+q
+Q
+Q
+q
+1 0 0 1 62.69291 668.0236 cm
+q
+BT 1 0 0 1 0 3.5 Tm 21 TL /F2 17.5 Tf 0 0 0 rg (Objectives) Tj T* ET
+Q
+Q
+q
+1 0 0 1 62.69291 650.0236 cm
+q
+BT 1 0 0 1 0 2 Tm 12 TL /F1 10 Tf 0 0 0 rg (You must implement an object-oriented ) Tj /F3 10 Tf 0 0 0 rg (Heap) Tj /F1 10 Tf 0 0 0 rg ( implementation in combination with the heap-sort algorithm.) Tj T* ET
+Q
+Q
+q
+1 0 0 1 62.69291 617.0236 cm
+q
+BT 1 0 0 1 0 3.5 Tm 21 TL /F2 17.5 Tf 0 0 0 rg (Requirements) Tj T* ET
+Q
+Q
+q
+1 0 0 1 62.69291 587.0236 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 14 Tm /F1 10 Tf 12 TL 3.789269 Tw (You are left relatively free, regarding your implementation, as long as it maintains the following) Tj T* 0 Tw (requirements:) Tj T* ET
+Q
+Q
+q
+1 0 0 1 62.69291 581.0236 cm
+Q
+q
+1 0 0 1 62.69291 581.0236 cm
+Q
+q
+1 0 0 1 62.69291 76.86614 cm
+0 0 0 rg
+BT /F1 10 Tf 12 TL ET
+q
+1 0 0 1 6 489.1575 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 2 Tm /F1 10 Tf 12 TL 10.5 0 Td (\177) Tj T* -10.5 0 Td ET
+Q
+Q
+q
+1 0 0 1 23 441.1575 cm
+q
+BT 1 0 0 1 0 50 Tm .818876 Tw 12 TL /F1 10 Tf 0 0 0 rg (The structure consists of at least a ) Tj /F3 10 Tf 0 0 0 rg (Node) Tj /F1 10 Tf 0 0 0 rg ( class and a Max ) Tj /F3 10 Tf 0 0 0 rg (Heap) Tj /F1 10 Tf 0 0 0 rg ( class, where the ) Tj /F3 10 Tf 0 0 0 rg (Heap) Tj /F1 10 Tf 0 0 0 rg ( class uses) Tj T* 0 Tw 2.247485 Tw (said ) Tj /F3 10 Tf 0 0 0 rg (Node) Tj /F1 10 Tf 0 0 0 rg ( classes for its innner structure. The contents of this ) Tj /F3 10 Tf 0 0 0 rg (Heap) Tj /F1 10 Tf 0 0 0 rg ( class are inspired by the) Tj T* 0 Tw .78229 Tw (wikipedia page on ) Tj /F3 10 Tf 0 0 0 rg (Heap_\(data_structure\)) Tj /F1 10 Tf 0 0 0 rg (, which you can find at the bottom of this document.) Tj T* 0 Tw 1.074983 Tw (These classes should at least have the following functionality. How you implement them exactly is) Tj T* 0 Tw (mostly up to you:) Tj T* ET
+Q
+Q
+q
+1 0 0 1 23 435.1575 cm
+Q
+q
+1 0 0 1 23 435.1575 cm
+Q
+q
+1 0 0 1 23 269.9575 cm
+0 0 0 rg
+BT /F1 10 Tf 12 TL ET
+q
+1 0 0 1 6 150.2 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 2 Tm /F1 10 Tf 12 TL 10.5 0 Td (\177) Tj T* -10.5 0 Td ET
+Q
+Q
+q
+1 0 0 1 23 150.2 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 2 Tm /F1 10 Tf 12 TL (Node \(heap.py\):) Tj T* ET
+Q
+Q
+q
+1 0 0 1 23 144.2 cm
+Q
+q
+1 0 0 1 23 144.2 cm
+Q
+q
+1 0 0 1 23 132.2 cm
+0 0 0 rg
+BT /F1 10 Tf 12 TL ET
+q
+1 0 0 1 6 -3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 2 Tm /F1 10 Tf 12 TL 10.5 0 Td (\177) Tj T* -10.5 0 Td ET
+Q
+Q
+q
+1 0 0 1 23 -3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 2 Tm /F1 10 Tf 12 TL (Can store its parent) Tj T* ET
+Q
+Q
+q
+Q
+Q
+q
+1 0 0 1 23 126.2 cm
+Q
+q
+1 0 0 1 23 114.2 cm
+0 0 0 rg
+BT /F1 10 Tf 12 TL ET
+q
+1 0 0 1 6 -3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 2 Tm /F1 10 Tf 12 TL 10.5 0 Td (\177) Tj T* -10.5 0 Td ET
+Q
+Q
+q
+1 0 0 1 23 -3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 2 Tm /F1 10 Tf 12 TL (Can store its children \(order is important, and a maximum of 2\)) Tj T* ET
+Q
+Q
+q
+Q
+Q
+q
+1 0 0 1 23 108.2 cm
+Q
+q
+1 0 0 1 23 96.2 cm
+0 0 0 rg
+BT /F1 10 Tf 12 TL ET
+q
+1 0 0 1 6 -3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 2 Tm /F1 10 Tf 12 TL 10.5 0 Td (\177) Tj T* -10.5 0 Td ET
+Q
+Q
+q
+1 0 0 1 23 -3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 2 Tm /F1 10 Tf 12 TL (Can store its value) Tj T* ET
+Q
+Q
+q
+Q
+Q
+q
+1 0 0 1 23 90.2 cm
+Q
+q
+1 0 0 1 23 -3 cm
+0 0 0 rg
+BT /F1 10 Tf 12 TL ET
+q
+1 0 0 1 6 78.2 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 2 Tm /F1 10 Tf 12 TL 10.5 0 Td (\177) Tj T* -10.5 0 Td ET
+Q
+Q
+q
+1 0 0 1 23 66.2 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 14 Tm /F1 10 Tf 12 TL 3.99748 Tw (Can be easily compared to other Node objects or numbers using all comparison) Tj T* 0 Tw (operations. For example:) Tj T* ET
+Q
+Q
+q
+1 0 0 1 23 -3 cm
+q
+q
+1 0 0 1 0 0 cm
+q
+1 0 0 1 6.6 6.6 cm
+q
+.662745 .662745 .662745 RG
+.5 w
+.960784 .960784 .862745 rg
+n -6 -6 396.6898 60 re B*
+Q
+q
+BT 1 0 0 1 0 38 Tm 12 TL /F3 10 Tf 0 0 0 rg (if node1 ) Tj (<) Tj ( node2:) Tj T* (  print\("I can check against fellow Node objects!"\)) Tj T* (if node1 ) Tj (>) Tj (= 20:) Tj T* (  print\("I can check numbers too"\)) Tj T* ET
+Q
+Q
+Q
+Q
+Q
+q
+Q
+Q
+q
+1 0 0 1 23 -3 cm
+Q
+q
+Q
+Q
+q
+1 0 0 1 23 263.9575 cm
+Q
+q
+1 0 0 1 23 -9 cm
+0 0 0 rg
+BT /F1 10 Tf 12 TL ET
+q
+1 0 0 1 6 257.9575 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 2 Tm /F1 10 Tf 12 TL 10.5 0 Td (\177) Tj T* -10.5 0 Td ET
+Q
+Q
+q
+1 0 0 1 23 257.9575 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 2 Tm /F1 10 Tf 12 TL (Heap \(heap.py\):) Tj T* ET
+Q
+Q
+q
+1 0 0 1 23 251.9575 cm
+Q
+q
+1 0 0 1 23 251.9575 cm
+Q
+q
+1 0 0 1 23 239.9575 cm
+0 0 0 rg
+BT /F1 10 Tf 12 TL ET
+q
+1 0 0 1 6 -3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 2 Tm /F1 10 Tf 12 TL 10.5 0 Td (\177) Tj T* -10.5 0 Td ET
+Q
+Q
+q
+1 0 0 1 23 -3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 2 Tm /F1 10 Tf 12 TL (Stores the head node \(you can obviously store more if you want to\)) Tj T* ET
+Q
+Q
+q
+Q
+Q
+q
+1 0 0 1 23 233.9575 cm
+Q
+q
+1 0 0 1 23 -9 cm
+0 0 0 rg
+BT /F1 10 Tf 12 TL ET
+q
+1 0 0 1 6 227.9575 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 2 Tm /F1 10 Tf 12 TL 10.5 0 Td (\177) Tj T* -10.5 0 Td ET
+Q
+Q
+q
+1 0 0 1 23 227.9575 cm
+q
+BT 1 0 0 1 0 2 Tm 12 TL /F1 10 Tf 0 0 0 rg (Minimally has the following functions \() Tj /F2 10 Tf (hint) Tj /F1 10 Tf ( you are free to create many more to help you\):) Tj T* ET
+Q
+Q
+q
+1 0 0 1 23 221.9575 cm
+Q
+q
+1 0 0 1 23 17.95748 cm
+0 0 0 rg
+BT /F1 10 Tf 12 TL ET
+BT 1 0 0 1 0 2 Tm  T* ET
+q
+1 0 0 1 20 198 cm
+Q
+q
+1 0 0 1 20 198 cm
+Q
+q
+1 0 0 1 20 186 cm
+0 0 0 rg
+BT /F1 10 Tf 12 TL ET
+q
+1 0 0 1 6 -3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 2 Tm /F1 10 Tf 12 TL 10.5 0 Td (\177) Tj T* -10.5 0 Td ET
+Q
+Q
+q
+1 0 0 1 23 -3 cm
+q
+BT 1 0 0 1 0 2 Tm 12 TL /F1 10 Tf 0 0 0 rg (find_max\(self\): Finds the maximum item of the ) Tj /F3 10 Tf 0 0 0 rg (Heap) Tj /F1 10 Tf 0 0 0 rg ( \(a.k.a. ) Tj /F3 10 Tf 0 0 0 rg (peek) Tj /F1 10 Tf 0 0 0 rg (\)) Tj T* ET
+Q
+Q
+q
+Q
+Q
+q
+1 0 0 1 20 180 cm
+Q
+q
+1 0 0 1 20 156 cm
+0 0 0 rg
+BT /F1 10 Tf 12 TL ET
+q
+1 0 0 1 6 9 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 2 Tm /F1 10 Tf 12 TL 10.5 0 Td (\177) Tj T* -10.5 0 Td ET
+Q
+Q
+q
+1 0 0 1 23 -3 cm
+q
+BT 1 0 0 1 0 14 Tm -0.03002 Tw 12 TL /F1 10 Tf 0 0 0 rg (insert\(self, number\): Adds a new element to the ) Tj /F3 10 Tf 0 0 0 rg (Heap) Tj /F1 10 Tf 0 0 0 rg (, and preserves the ) Tj /F3 10 Tf 0 0 0 rg (Heap) Tj /F1 10 Tf 0 0 0 rg  T* 0 Tw (properties \(a.k.a. ) Tj /F3 10 Tf 0 0 0 rg (push) Tj /F1 10 Tf 0 0 0 rg (\)) Tj T* ET
+Q
+Q
+q
+Q
+Q
+q
+1 0 0 1 20 150 cm
+Q
+q
+1 0 0 1 20 126 cm
+0 0 0 rg
+BT /F1 10 Tf 12 TL ET
+q
+1 0 0 1 6 9 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 2 Tm /F1 10 Tf 12 TL 10.5 0 Td (\177) Tj T* -10.5 0 Td ET
+Q
+Q
+q
+1 0 0 1 23 -3 cm
+q
+BT 1 0 0 1 0 14 Tm 1.088976 Tw 12 TL /F1 10 Tf 0 0 0 rg (extract_max\(self\): Returns the node with the maximum value from the ) Tj /F3 10 Tf 0 0 0 rg (Heap) Tj /F1 10 Tf 0 0 0 rg (,) Tj T* 0 Tw (after removing it \(a.k.a. ) Tj /F3 10 Tf 0 0 0 rg (pop) Tj /F1 10 Tf 0 0 0 rg (\)) Tj T* ET
+Q
+Q
+q
+Q
+Q
+q
+1 0 0 1 20 120 cm
+Q
+q
+1 0 0 1 20 60 cm
+0 0 0 rg
+BT /F1 10 Tf 12 TL ET
+q
+1 0 0 1 6 45 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 2 Tm /F1 10 Tf 12 TL 10.5 0 Td (\177) Tj T* -10.5 0 Td ET
+Q
+Q
+q
+1 0 0 1 23 -3 cm
+q
+BT 1 0 0 1 0 50 Tm 1.251976 Tw 12 TL /F1 10 Tf 0 0 0 rg (build_heap\(input_list\): Takes a list of elements and generates a single ) Tj /F3 10 Tf 0 0 0 rg (Heap) Tj /F1 10 Tf 0 0 0 rg  T* 0 Tw 1.210888 Tw (from these, using a series of ) Tj /F3 10 Tf 0 0 0 rg (insert) Tj /F1 10 Tf 0 0 0 rg ( commands. \(Although a more efficient) Tj T* 0 Tw .820976 Tw (version is possible, with an object-oriented approach this is significantly more) Tj T* 0 Tw 1.265976 Tw (difficult to implement, therefore the less efficient version with complexity O\(n) Tj T* 0 Tw (log n\) is allowed\).) Tj T* ET
+Q
+Q
+q
+Q
+Q
+q
+1 0 0 1 20 54 cm
+Q
+q
+1 0 0 1 20 42 cm
+0 0 0 rg
+BT /F1 10 Tf 12 TL ET
+q
+1 0 0 1 6 -3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 2 Tm /F1 10 Tf 12 TL 10.5 0 Td (\177) Tj T* -10.5 0 Td ET
+Q
+Q
+q
+1 0 0 1 23 -3 cm
+q
+BT 1 0 0 1 0 2 Tm 12 TL /F1 10 Tf 0 0 0 rg (size\(self\): Returns the current size of the ) Tj /F3 10 Tf 0 0 0 rg (Heap) Tj T* ET
+Q
+Q
+q
+Q
+Q
+q
+1 0 0 1 20 36 cm
+Q
+q
+1 0 0 1 20 24 cm
+0 0 0 rg
+BT /F1 10 Tf 12 TL ET
+q
+1 0 0 1 6 -3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 2 Tm /F1 10 Tf 12 TL 10.5 0 Td (\177) Tj T* -10.5 0 Td ET
+Q
+Q
+q
+1 0 0 1 23 -3 cm
+q
+BT 1 0 0 1 0 2 Tm 12 TL /F1 10 Tf 0 0 0 rg (is_empty\(self\): returns true if the ) Tj /F3 10 Tf 0 0 0 rg (Heap) Tj /F1 10 Tf 0 0 0 rg ( has zero elements, else False) Tj T* ET
+Q
+Q
+q
+Q
+Q
+q
+1 0 0 1 20 18 cm
+Q
+q
+1 0 0 1 20 6 cm
+0 0 0 rg
+BT /F1 10 Tf 12 TL ET
+q
+1 0 0 1 6 -3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 2 Tm /F1 10 Tf 12 TL 10.5 0 Td (\177) Tj T* -10.5 0 Td ET
+Q
+Q
+q
+1 0 0 1 23 -3 cm
+q
+BT 1 0 0 1 0 2 Tm 12 TL /F1 10 Tf 0 0 0 rg (delete\(self, node\): Deletes a node from the ) Tj /F3 10 Tf 0 0 0 rg (Heap) Tj /F1 10 Tf 0 0 0 rg ( \(in the proper way\)) Tj T* ET
+Q
+Q
+q
+Q
+Q
+q
+1 0 0 1 20 0 cm
+Q
+q
+Q
+Q
+q
+Q
+Q
+q
+Q
+Q
+q
+Q
+Q
+ 
+endstream
+endobj
+27 0 obj
+<<
+/Length 7296
+>>
+stream
+1 0 0 1 0 0 cm  BT /F1 12 Tf 14.4 TL ET
+q
+1 0 0 1 62.69291 437.8236 cm
+0 0 0 rg
+BT /F1 10 Tf 12 TL ET
+BT 1 0 0 1 6 314.2 Tm  T* ET
+q
+1 0 0 1 23 -3 cm
+0 0 0 rg
+BT /F1 10 Tf 12 TL ET
+BT 1 0 0 1 6 314.2 Tm  T* ET
+q
+1 0 0 1 23 162.2 cm
+0 0 0 rg
+BT /F1 10 Tf 12 TL ET
+BT 1 0 0 1 6 149 Tm  T* ET
+q
+1 0 0 1 23 -3 cm
+0 0 0 rg
+BT /F1 10 Tf 12 TL ET
+BT 1 0 0 1 0 2 Tm  T* ET
+q
+1 0 0 1 20 150 cm
+0 0 0 rg
+BT /F1 10 Tf 12 TL ET
+q
+1 0 0 1 6 -3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 2 Tm /F1 10 Tf 12 TL 10.5 0 Td (\177) Tj T* -10.5 0 Td ET
+Q
+Q
+q
+1 0 0 1 23 -3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 2 Tm /F1 10 Tf 12 TL (__sift_up\(self, node\): Move a node up in the tree, as long as needed.) Tj T* ET
+Q
+Q
+q
+Q
+Q
+q
+1 0 0 1 20 144 cm
+Q
+q
+1 0 0 1 20 132 cm
+0 0 0 rg
+BT /F1 10 Tf 12 TL ET
+q
+1 0 0 1 6 -3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 2 Tm /F1 10 Tf 12 TL 10.5 0 Td (\177) Tj T* -10.5 0 Td ET
+Q
+Q
+q
+1 0 0 1 23 -3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 2 Tm /F1 10 Tf 12 TL (__sift_down\(self, node\): Move a node down in the tree, as long as needed.) Tj T* ET
+Q
+Q
+q
+Q
+Q
+q
+1 0 0 1 20 126 cm
+Q
+q
+1 0 0 1 20 66 cm
+0 0 0 rg
+BT /F1 10 Tf 12 TL ET
+q
+1 0 0 1 6 45 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 2 Tm /F1 10 Tf 12 TL 10.5 0 Td (\177) Tj T* -10.5 0 Td ET
+Q
+Q
+q
+1 0 0 1 23 -3 cm
+q
+BT 1 0 0 1 0 50 Tm -0.03128 Tw 12 TL /F1 10 Tf 0 0 0 rg (__find_second_to_last_tail\(self\): Starting from the ) Tj /F3 10 Tf 0 0 0 rg (tail_node) Tj /F1 10 Tf 0 0 0 rg ( of the ) Tj /F3 10 Tf 0 0 0 rg (Heap) Tj /F1 10 Tf 0 0 0 rg (, finds) Tj T* 0 Tw .370751 Tw (the second-to-last node in the ) Tj /F3 10 Tf 0 0 0 rg (Heap) Tj /F1 10 Tf 0 0 0 rg (. It will be necessary to update the tail_node) Tj T* 0 Tw 1.364597 Tw (when you remove the current tail. \() Tj /F2 10 Tf (hint) Tj /F1 10 Tf (: You can always find the tail_node by) Tj T* 0 Tw .285318 Tw (iterating through the ) Tj /F3 10 Tf 0 0 0 rg (Heap) Tj /F1 10 Tf 0 0 0 rg (, but in many cases it might be possible that there is a) Tj T* 0 Tw (quicker way, by starting from the current tail_node.\)) Tj T* ET
+Q
+Q
+q
+Q
+Q
+q
+1 0 0 1 20 60 cm
+Q
+q
+1 0 0 1 20 0 cm
+0 0 0 rg
+BT /F1 10 Tf 12 TL ET
+q
+1 0 0 1 6 45 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 2 Tm /F1 10 Tf 12 TL 10.5 0 Td (\177) Tj T* -10.5 0 Td ET
+Q
+Q
+q
+1 0 0 1 23 -3 cm
+q
+BT 1 0 0 1 0 50 Tm 1.56747 Tw 12 TL /F1 10 Tf 0 0 0 rg (__find_first_free_parent\(self\): Starting from the ) Tj /F3 10 Tf 0 0 0 rg (tail_node) Tj /F1 10 Tf 0 0 0 rg ( of the ) Tj /F3 10 Tf 0 0 0 rg (Heap) Tj /F1 10 Tf 0 0 0 rg (, finds) Tj T* 0 Tw .898735 Tw (the first parent that has the open slot that should receive a new child. It will be) Tj T* 0 Tw -0.004682 Tw (necessary to find this parent when you insert a new node on the heap. \() Tj /F2 10 Tf (hint) Tj /F1 10 Tf (: The) Tj T* 0 Tw .393555 Tw (hint from the previous line might still be relevant here, although it now applies to) Tj T* 0 Tw (the parent instead of a new tail_node.\)) Tj T* ET
+Q
+Q
+q
+Q
+Q
+q
+1 0 0 1 20 0 cm
+Q
+q
+Q
+Q
+q
+1 0 0 1 23 -3 cm
+Q
+q
+Q
+Q
+q
+1 0 0 1 23 156.2 cm
+Q
+q
+1 0 0 1 23 132.2 cm
+0 0 0 rg
+BT /F1 10 Tf 12 TL ET
+q
+1 0 0 1 6 9 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 2 Tm /F1 10 Tf 12 TL 10.5 0 Td (\177) Tj T* -10.5 0 Td ET
+Q
+Q
+q
+1 0 0 1 23 -3 cm
+q
+BT 1 0 0 1 0 14 Tm 1.380751 Tw 12 TL /F1 10 Tf 0 0 0 rg (Does NOT maintain a list of all contained nodes. Using the array-representation for the) Tj T* 0 Tw /F3 10 Tf 0 0 0 rg (Heap) Tj /F1 10 Tf 0 0 0 rg ( is also explicitly forbidden.) Tj T* ET
+Q
+Q
+q
+Q
+Q
+q
+1 0 0 1 23 126.2 cm
+Q
+q
+1 0 0 1 23 -3 cm
+0 0 0 rg
+BT /F1 10 Tf 12 TL ET
+q
+1 0 0 1 6 114.2 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 2 Tm /F1 10 Tf 12 TL 10.5 0 Td (\177) Tj T* -10.5 0 Td ET
+Q
+Q
+q
+1 0 0 1 23 102.2 cm
+q
+BT 1 0 0 1 0 14 Tm .28186 Tw 12 TL /F1 10 Tf 0 0 0 rg (When the ) Tj /F3 10 Tf 0 0 0 rg (Heap) Tj /F1 10 Tf 0 0 0 rg ( is printed, it prints out the values of its elements in breadth-first order. For) Tj T* 0 Tw (example take the following drawing:) Tj T* ET
+Q
+Q
+q
+1 0 0 1 23 -3 cm
+q
+q
+1 0 0 1 0 0 cm
+q
+1 0 0 1 6.6 6.6 cm
+q
+.662745 .662745 .662745 RG
+.5 w
+.960784 .960784 .862745 rg
+n -6 -6 396.6898 96 re B*
+Q
+q
+BT 1 0 0 1 0 74 Tm 12 TL /F3 10 Tf 0 0 0 rg (   10) Tj T* (   /\\) Tj T* (  9  8) Tj T* ( / \\ /) Tj T* (1  2 3) Tj T* (>) Tj (>) Tj ( print\(heap1\)) Tj T* (10 9 8 1 2 3) Tj T* ET
+Q
+Q
+Q
+Q
+Q
+q
+Q
+Q
+q
+1 0 0 1 23 -3 cm
+Q
+q
+Q
+Q
+q
+1 0 0 1 23 -3 cm
+Q
+q
+Q
+Q
+q
+1 0 0 1 62.69291 437.8236 cm
+Q
+q
+1 0 0 1 62.69291 404.8236 cm
+q
+BT 1 0 0 1 0 3.5 Tm 21 TL /F2 17.5 Tf 0 0 0 rg (Details on the input and output formats) Tj T* ET
+Q
+Q
+q
+1 0 0 1 62.69291 392.8236 cm
+Q
+q
+1 0 0 1 62.69291 392.8236 cm
+Q
+q
+1 0 0 1 62.69291 269.6236 cm
+0 0 0 rg
+BT /F1 10 Tf 12 TL ET
+q
+1 0 0 1 6 108.2 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 2 Tm /F1 10 Tf 12 TL 10.5 0 Td (\177) Tj T* -10.5 0 Td ET
+Q
+Q
+q
+1 0 0 1 23 84.2 cm
+q
+BT 1 0 0 1 0 26 Tm -0.07689 Tw 12 TL /F1 10 Tf 0 0 0 rg (The heap-sort algorithm, should take a ) Tj /F3 10 Tf 0 0 0 rg (Heap) Tj /F1 10 Tf 0 0 0 rg (, and return the sorted output. The original content of the) Tj T* 0 Tw .177984 Tw /F3 10 Tf 0 0 0 rg (Heap) Tj /F1 10 Tf 0 0 0 rg ( does not have to be preserved. The sorting algorithm takes a sequences of integers separated) Tj T* 0 Tw (by spaces as command-line input, and print the sorted sequence \(separated by spaces\).) Tj T* ET
+Q
+Q
+q
+1 0 0 1 23 66.2 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 2 Tm /F1 10 Tf 12 TL (Example:) Tj T* ET
+Q
+Q
+q
+1 0 0 1 23 -3 cm
+q
+q
+1 0 0 1 0 0 cm
+q
+1 0 0 1 6.6 6.6 cm
+q
+.662745 .662745 .662745 RG
+.5 w
+.960784 .960784 .862745 rg
+n -6 -6 445.6898 60 re B*
+Q
+q
+0 0 0 rg
+BT 1 0 0 1 0 38 Tm /F3 10 Tf 12 TL ($ python3 heap_sort.py 3 3 2) Tj T* (2 3 3) Tj T* ($ python3 heap_sort.py 3 5 4 1 2 9 10 20) Tj T* (1 2 3 4 5 9 10 20) Tj T* ET
+Q
+Q
+Q
+Q
+Q
+q
+Q
+Q
+q
+1 0 0 1 62.69291 263.6236 cm
+Q
+q
+1 0 0 1 62.69291 188.4236 cm
+0 0 0 rg
+BT /F1 10 Tf 12 TL ET
+q
+1 0 0 1 6 60.2 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 2 Tm /F1 10 Tf 12 TL 10.5 0 Td (\177) Tj T* -10.5 0 Td ET
+Q
+Q
+q
+1 0 0 1 23 60.2 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 2 Tm /F1 10 Tf 12 TL (Spaces can be safely ignored) Tj T* ET
+Q
+Q
+q
+1 0 0 1 23 42.2 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 2 Tm /F1 10 Tf 12 TL (Example:) Tj T* ET
+Q
+Q
+q
+1 0 0 1 23 -3 cm
+q
+q
+1 0 0 1 0 0 cm
+q
+1 0 0 1 6.6 6.6 cm
+q
+.662745 .662745 .662745 RG
+.5 w
+.960784 .960784 .862745 rg
+n -6 -6 445.6898 36 re B*
+Q
+q
+0 0 0 rg
+BT 1 0 0 1 0 14 Tm /F3 10 Tf 12 TL ($ python3 heap_sort 4  5   3 2) Tj T* (2 3 4 5) Tj T* ET
+Q
+Q
+Q
+Q
+Q
+q
+Q
+Q
+q
+1 0 0 1 62.69291 188.4236 cm
+Q
+q
+1 0 0 1 62.69291 158.4236 cm
+q
+BT 1 0 0 1 0 14 Tm .873888 Tw 12 TL /F1 10 Tf 0 0 0 rg (You must submit your work as a tarball ) Tj /F1 8 Tf 0 0 .501961 rg 5 Ts (1) Tj /F1 10 Tf 0 0 0 rg 0 Ts (. Next to the source code, your archive must contain a text file) Tj T* 0 Tw (named \223) Tj /F3 10 Tf 0 0 0 rg (AUTHORS) Tj /F1 10 Tf 0 0 0 rg (\224 containing your name and Student ID.) Tj T* ET
+Q
+Q
+q
+1 0 0 1 62.69291 125.4236 cm
+q
+BT 1 0 0 1 0 3.5 Tm 21 TL /F2 17.5 Tf 0 0 0 rg (Getting started) Tj T* ET
+Q
+Q
+q
+1 0 0 1 62.69291 113.4236 cm
+Q
+q
+1 0 0 1 62.69291 113.4236 cm
+Q
+q
+1 0 0 1 62.69291 89.42362 cm
+0 0 0 rg
+BT /F1 10 Tf 12 TL ET
+q
+1 0 0 1 6 9 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 2 Tm /F1 10 Tf 12 TL 5.66 0 Td (1.) Tj T* -5.66 0 Td ET
+Q
+Q
+q
+1 0 0 1 23 -3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 14 Tm /F1 10 Tf 12 TL .149318 Tw (Download the tarball, that includes the checks, these instructions, and the empty python files you will) Tj T* 0 Tw (fill as part of the assignment.) Tj T* ET
+Q
+Q
+q
+Q
+Q
+q
+1 0 0 1 62.69291 83.42362 cm
+Q
+ 
+endstream
+endobj
+28 0 obj
+<<
+/Length 9508
+>>
+stream
+1 0 0 1 0 0 cm  BT /F1 12 Tf 14.4 TL ET
+q
+1 0 0 1 62.69291 741.0236 cm
+0 0 0 rg
+BT /F1 10 Tf 12 TL ET
+q
+1 0 0 1 6 9 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 2 Tm /F1 10 Tf 12 TL 5.66 0 Td (2.) Tj T* -5.66 0 Td ET
+Q
+Q
+q
+1 0 0 1 23 -3 cm
+q
+BT 1 0 0 1 0 14 Tm .996651 Tw 12 TL /F1 10 Tf 0 0 0 rg (Understand what a ) Tj /F3 10 Tf 0 0 0 rg (Heap) Tj /F1 10 Tf 0 0 0 rg ( is, and how it works. On internet you find many ) Tj /F3 10 Tf 0 0 0 rg (array) Tj /F1 10 Tf 0 0 0 rg ( implementations,) Tj T* 0 Tw (you can not use these. Your implementation must be object-oriented.) Tj T* ET
+Q
+Q
+q
+Q
+Q
+q
+1 0 0 1 62.69291 735.0236 cm
+Q
+q
+1 0 0 1 62.69291 711.0236 cm
+0 0 0 rg
+BT /F1 10 Tf 12 TL ET
+q
+1 0 0 1 6 9 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 2 Tm /F1 10 Tf 12 TL 5.66 0 Td (3.) Tj T* -5.66 0 Td ET
+Q
+Q
+q
+1 0 0 1 23 -3 cm
+q
+BT 1 0 0 1 0 14 Tm 1.02498 Tw 12 TL /F1 10 Tf 0 0 0 rg (Familiarize yourself with the heap-sort algorithm. Also consider this algorithm when designing your) Tj T* 0 Tw /F3 10 Tf 0 0 0 rg (Heap) Tj /F1 10 Tf 0 0 0 rg ( class.) Tj T* ET
+Q
+Q
+q
+Q
+Q
+q
+1 0 0 1 62.69291 705.0236 cm
+Q
+q
+1 0 0 1 62.69291 681.0236 cm
+0 0 0 rg
+BT /F1 10 Tf 12 TL ET
+q
+1 0 0 1 6 9 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 2 Tm /F1 10 Tf 12 TL 5.66 0 Td (4.) Tj T* -5.66 0 Td ET
+Q
+Q
+q
+1 0 0 1 23 -3 cm
+q
+BT 1 0 0 1 0 14 Tm .340542 Tw 12 TL /F1 10 Tf 0 0 0 rg (Write a bunch of valid and invalid expressions to serve as test input for your program and add these) Tj T* 0 Tw (to ) Tj /F3 10 Tf 0 0 0 rg (check_heap_sort.py) Tj /F1 10 Tf 0 0 0 rg (.) Tj T* ET
+Q
+Q
+q
+Q
+Q
+q
+1 0 0 1 62.69291 681.0236 cm
+Q
+q
+1 0 0 1 62.69291 648.0236 cm
+q
+BT 1 0 0 1 0 3.5 Tm 21 TL /F2 17.5 Tf 0 0 0 rg (Testing) Tj T* ET
+Q
+Q
+q
+1 0 0 1 62.69291 618.0236 cm
+q
+BT 1 0 0 1 0 14 Tm 1.00561 Tw 12 TL /F1 10 Tf 0 0 0 rg (A small set of tests is provided for the ) Tj /F3 10 Tf 0 0 0 rg (Heap) Tj /F1 10 Tf 0 0 0 rg ( sort algorithm. The file ) Tj /F3 10 Tf 0 0 0 rg (check_heap_sort.py) Tj /F1 10 Tf 0 0 0 rg ( contains a) Tj T* 0 Tw (basic set of testcases for the sorting algorithm.) Tj T* ET
+Q
+Q
+q
+1 0 0 1 62.69291 588.0236 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 14 Tm /F1 10 Tf 12 TL .166654 Tw (The test sets provided are not complete. Add your own tests to make sure that your implementation of the) Tj T* 0 Tw (data structure and the algorithm is correct.) Tj T* ET
+Q
+Q
+q
+1 0 0 1 62.69291 555.0236 cm
+q
+BT 1 0 0 1 0 3.5 Tm 21 TL /F2 17.5 Tf 0 0 0 rg (Grading) Tj T* ET
+Q
+Q
+q
+1 0 0 1 62.69291 537.0236 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 2 Tm /F1 10 Tf 12 TL (Your grade starts from 0, and the following tests determine your grade:) Tj T* ET
+Q
+Q
+q
+1 0 0 1 62.69291 531.0236 cm
+Q
+q
+1 0 0 1 62.69291 531.0236 cm
+Q
+q
+1 0 0 1 62.69291 519.0236 cm
+0 0 0 rg
+BT /F1 10 Tf 12 TL ET
+q
+1 0 0 1 6 -3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 2 Tm /F1 10 Tf 12 TL 10.5 0 Td (\177) Tj T* -10.5 0 Td ET
+Q
+Q
+q
+1 0 0 1 23 -3 cm
+q
+BT 1 0 0 1 0 2 Tm 12 TL /F1 10 Tf 0 0 0 rg (+0,5pt if you have submitted an archive in the right format with an ) Tj /F3 10 Tf 0 0 0 rg (AUTHORS) Tj /F1 10 Tf 0 0 0 rg ( file.) Tj T* ET
+Q
+Q
+q
+Q
+Q
+q
+1 0 0 1 62.69291 513.0236 cm
+Q
+q
+1 0 0 1 62.69291 489.0236 cm
+0 0 0 rg
+BT /F1 10 Tf 12 TL ET
+q
+1 0 0 1 6 9 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 2 Tm /F1 10 Tf 12 TL 10.5 0 Td (\177) Tj T* -10.5 0 Td ET
+Q
+Q
+q
+1 0 0 1 23 -3 cm
+q
+BT 1 0 0 1 0 14 Tm 1.21332 Tw 12 TL /F1 10 Tf 0 0 0 rg (+0,5pt if your code runs without errors and you have made an effort for the ) Tj /F3 10 Tf 0 0 0 rg (Heap) Tj /F1 10 Tf 0 0 0 rg ( and the sorting) Tj T* 0 Tw (algorithm.) Tj T* ET
+Q
+Q
+q
+Q
+Q
+q
+1 0 0 1 62.69291 483.0236 cm
+Q
+q
+1 0 0 1 62.69291 471.0236 cm
+0 0 0 rg
+BT /F1 10 Tf 12 TL ET
+q
+1 0 0 1 6 -3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 2 Tm /F1 10 Tf 12 TL 10.5 0 Td (\177) Tj T* -10.5 0 Td ET
+Q
+Q
+q
+1 0 0 1 23 -3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 2 Tm /F1 10 Tf 12 TL (+1pt Node class contains all the required functionality, and works properly.) Tj T* ET
+Q
+Q
+q
+Q
+Q
+q
+1 0 0 1 62.69291 465.0236 cm
+Q
+q
+1 0 0 1 62.69291 453.0236 cm
+0 0 0 rg
+BT /F1 10 Tf 12 TL ET
+q
+1 0 0 1 6 -3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 2 Tm /F1 10 Tf 12 TL 10.5 0 Td (\177) Tj T* -10.5 0 Td ET
+Q
+Q
+q
+1 0 0 1 23 -3 cm
+q
+BT 1 0 0 1 0 2 Tm 12 TL /F1 10 Tf 0 0 0 rg (+1pt ) Tj /F3 10 Tf 0 0 0 rg (find_max) Tj /F1 10 Tf 0 0 0 rg ( , ) Tj /F3 10 Tf 0 0 0 rg (insert) Tj /F1 10 Tf 0 0 0 rg (, ) Tj /F3 10 Tf 0 0 0 rg (extract_max) Tj /F1 10 Tf 0 0 0 rg (, ) Tj /F3 10 Tf 0 0 0 rg (size) Tj /F1 10 Tf 0 0 0 rg (, ) Tj /F3 10 Tf 0 0 0 rg (build_heap) Tj /F1 10 Tf 0 0 0 rg (, and ) Tj /F3 10 Tf 0 0 0 rg (is_empty) Tj /F1 10 Tf 0 0 0 rg ( work as intended.) Tj T* ET
+Q
+Q
+q
+Q
+Q
+q
+1 0 0 1 62.69291 447.0236 cm
+Q
+q
+1 0 0 1 62.69291 435.0236 cm
+0 0 0 rg
+BT /F1 10 Tf 12 TL ET
+q
+1 0 0 1 6 -3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 2 Tm /F1 10 Tf 12 TL 10.5 0 Td (\177) Tj T* -10.5 0 Td ET
+Q
+Q
+q
+1 0 0 1 23 -3 cm
+q
+BT 1 0 0 1 0 2 Tm 12 TL /F1 10 Tf 0 0 0 rg (+1pt ) Tj /F3 10 Tf 0 0 0 rg (__sift_up) Tj /F1 10 Tf 0 0 0 rg ( Works as intended) Tj T* ET
+Q
+Q
+q
+Q
+Q
+q
+1 0 0 1 62.69291 429.0236 cm
+Q
+q
+1 0 0 1 62.69291 417.0236 cm
+0 0 0 rg
+BT /F1 10 Tf 12 TL ET
+q
+1 0 0 1 6 -3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 2 Tm /F1 10 Tf 12 TL 10.5 0 Td (\177) Tj T* -10.5 0 Td ET
+Q
+Q
+q
+1 0 0 1 23 -3 cm
+q
+BT 1 0 0 1 0 2 Tm 12 TL /F1 10 Tf 0 0 0 rg (+1.5pt ) Tj /F3 10 Tf 0 0 0 rg (__sift_down) Tj /F1 10 Tf 0 0 0 rg ( Works as intended) Tj T* ET
+Q
+Q
+q
+Q
+Q
+q
+1 0 0 1 62.69291 411.0236 cm
+Q
+q
+1 0 0 1 62.69291 399.0236 cm
+0 0 0 rg
+BT /F1 10 Tf 12 TL ET
+q
+1 0 0 1 6 -3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 2 Tm /F1 10 Tf 12 TL 10.5 0 Td (\177) Tj T* -10.5 0 Td ET
+Q
+Q
+q
+1 0 0 1 23 -3 cm
+q
+BT 1 0 0 1 0 2 Tm 12 TL /F1 10 Tf 0 0 0 rg (+1.5pt ) Tj /F3 10 Tf 0 0 0 rg (delete) Tj /F1 10 Tf 0 0 0 rg ( Works as intended) Tj T* ET
+Q
+Q
+q
+Q
+Q
+q
+1 0 0 1 62.69291 393.0236 cm
+Q
+q
+1 0 0 1 62.69291 381.0236 cm
+0 0 0 rg
+BT /F1 10 Tf 12 TL ET
+q
+1 0 0 1 6 -3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 2 Tm /F1 10 Tf 12 TL 10.5 0 Td (\177) Tj T* -10.5 0 Td ET
+Q
+Q
+q
+1 0 0 1 23 -3 cm
+q
+BT 1 0 0 1 0 2 Tm 12 TL /F1 10 Tf 0 0 0 rg (+0.5pt The ) Tj /F3 10 Tf 0 0 0 rg (Heap) Tj /F1 10 Tf 0 0 0 rg ( has a proper constructor \(essentially the ) Tj /F3 10 Tf 0 0 0 rg (create-heap) Tj /F1 10 Tf 0 0 0 rg ( command from wikipedia\)) Tj T* ET
+Q
+Q
+q
+Q
+Q
+q
+1 0 0 1 62.69291 375.0236 cm
+Q
+q
+1 0 0 1 62.69291 351.0236 cm
+0 0 0 rg
+BT /F1 10 Tf 12 TL ET
+q
+1 0 0 1 6 9 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 2 Tm /F1 10 Tf 12 TL 10.5 0 Td (\177) Tj T* -10.5 0 Td ET
+Q
+Q
+q
+1 0 0 1 23 -3 cm
+q
+BT 1 0 0 1 0 14 Tm 1.041412 Tw 12 TL /F1 10 Tf 0 0 0 rg (+0.5pt ) Tj /F3 10 Tf 0 0 0 rg (__find_second_last) Tj /F1 10 Tf 0 0 0 rg ( function works efficiently \(you can do it in N, but there are smarter) Tj T* 0 Tw (ways\)) Tj T* ET
+Q
+Q
+q
+Q
+Q
+q
+1 0 0 1 62.69291 345.0236 cm
+Q
+q
+1 0 0 1 62.69291 333.0236 cm
+0 0 0 rg
+BT /F1 10 Tf 12 TL ET
+q
+1 0 0 1 6 -3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 2 Tm /F1 10 Tf 12 TL 10.5 0 Td (\177) Tj T* -10.5 0 Td ET
+Q
+Q
+q
+1 0 0 1 23 -3 cm
+q
+BT 1 0 0 1 0 2 Tm 12 TL /F1 10 Tf 0 0 0 rg (+0.5pt Heap_sort algorithm works with your object-oriented ) Tj /F3 10 Tf 0 0 0 rg (Heap) Tj /F1 10 Tf 0 0 0 rg ( approach.) Tj T* ET
+Q
+Q
+q
+Q
+Q
+q
+1 0 0 1 62.69291 327.0236 cm
+Q
+q
+1 0 0 1 62.69291 315.0236 cm
+0 0 0 rg
+BT /F1 10 Tf 12 TL ET
+q
+1 0 0 1 6 -3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 2 Tm /F1 10 Tf 12 TL 10.5 0 Td (\177) Tj T* -10.5 0 Td ET
+Q
+Q
+q
+1 0 0 1 23 -3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 2 Tm /F1 10 Tf 12 TL (+1.5pt Passes all the command-line test-cases that TAs came up with.) Tj T* ET
+Q
+Q
+q
+Q
+Q
+q
+1 0 0 1 62.69291 309.0236 cm
+Q
+q
+1 0 0 1 62.69291 285.0236 cm
+0 0 0 rg
+BT /F1 10 Tf 12 TL ET
+q
+1 0 0 1 6 9 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 2 Tm /F1 10 Tf 12 TL 10.5 0 Td (\177) Tj T* -10.5 0 Td ET
+Q
+Q
+q
+1 0 0 1 23 -3 cm
+q
+BT 1 0 0 1 0 14 Tm .46186 Tw 12 TL /F1 10 Tf 0 0 0 rg (-2pt if you used any python libraries to complete the ) Tj /F3 10 Tf 0 0 0 rg (Node) Tj /F1 10 Tf 0 0 0 rg (, ) Tj /F3 10 Tf 0 0 0 rg (Heap) Tj /F1 10 Tf 0 0 0 rg (. For the heap-sort only ) Tj /F3 10 Tf 0 0 0 rg (argparse) Tj /F1 10 Tf 0 0 0 rg  T* 0 Tw (would be allowed.) Tj T* ET
+Q
+Q
+q
+Q
+Q
+q
+1 0 0 1 62.69291 279.0236 cm
+Q
+q
+1 0 0 1 62.69291 255.0236 cm
+0 0 0 rg
+BT /F1 10 Tf 12 TL ET
+q
+1 0 0 1 6 9 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 2 Tm /F1 10 Tf 12 TL 10.5 0 Td (\177) Tj T* -10.5 0 Td ET
+Q
+Q
+q
+1 0 0 1 23 -3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 14 Tm /F1 10 Tf 12 TL .766235 Tw (-10pt if you used the built-in sort function or priority-queue, or any similar built-in function that does) Tj T* 0 Tw (the same.) Tj T* ET
+Q
+Q
+q
+Q
+Q
+q
+1 0 0 1 62.69291 255.0236 cm
+Q
+q
+1 0 0 1 62.69291 222.0236 cm
+q
+BT 1 0 0 1 0 3.5 Tm 21 TL /F2 17.5 Tf 0 0 0 rg (See also) Tj T* ET
+Q
+Q
+q
+1 0 0 1 62.69291 210.0236 cm
+Q
+q
+1 0 0 1 62.69291 210.0236 cm
+Q
+q
+1 0 0 1 62.69291 198.0236 cm
+0 0 0 rg
+BT /F1 10 Tf 12 TL ET
+q
+1 0 0 1 6 -3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 2 Tm /F1 10 Tf 12 TL 10.5 0 Td (\177) Tj T* -10.5 0 Td ET
+Q
+Q
+q
+1 0 0 1 23 -3 cm
+q
+BT 1 0 0 1 0 2 Tm 12 TL /F1 10 Tf 0 0 0 rg (Heap ) Tj 0 0 .501961 rg (https://en.wikipedia.org/wiki/Heap_\(data_structure) Tj 0 0 0 rg (\)) Tj T* ET
+Q
+Q
+q
+Q
+Q
+q
+1 0 0 1 62.69291 192.0236 cm
+Q
+q
+1 0 0 1 62.69291 144.0236 cm
+0 0 0 rg
+BT /F1 10 Tf 12 TL ET
+q
+1 0 0 1 6 33 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 2 Tm /F1 10 Tf 12 TL 10.5 0 Td (\177) Tj T* -10.5 0 Td ET
+Q
+Q
+q
+1 0 0 1 23 33 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 2 Tm /F1 10 Tf 12 TL (Heapsort \(Array-notation\)) Tj T* ET
+Q
+Q
+q
+1 0 0 1 23 15 cm
+q
+0 0 .501961 rg
+0 0 .501961 RG
+BT 1 0 0 1 0 2 Tm /F1 10 Tf 12 TL (https://en.wikipedia.org/wiki/Heapsort) Tj T* ET
+Q
+Q
+q
+1 0 0 1 23 -3 cm
+q
+0 0 .501961 rg
+0 0 .501961 RG
+BT 1 0 0 1 0 2 Tm /F1 10 Tf 12 TL (https://www.geeksforgeeks.org/heap-sort/) Tj T* ET
+Q
+Q
+q
+Q
+Q
+q
+1 0 0 1 62.69291 144.0236 cm
+Q
+q
+1 0 0 1 62.69291 87.33071 cm
+Q
+ 
+endstream
+endobj
+29 0 obj
+<<
+/Length 389
+>>
+stream
+1 0 0 1 0 0 cm  BT /F1 12 Tf 14.4 TL ET
+q
+1 0 0 1 62.69291 736.6772 cm
+n 0 14.17323 m 469.8898 14.17323 l S
+Q
+q
+1 0 0 1 62.69291 724.6772 cm
+0 0 0 rg
+BT /F1 10 Tf 12 TL ET
+q
+1 0 0 1 6 0 cm
+q
+BT 1 0 0 1 0 2 Tm 12 TL /F1 10 Tf 0 0 .501961 rg (1) Tj T* ET
+Q
+Q
+q
+1 0 0 1 91.03937 0 cm
+q
+0 0 .501961 rg
+0 0 .501961 RG
+BT 1 0 0 1 0 2 Tm /F1 10 Tf 12 TL (http://bfy.tw/Gdfn) Tj T* ET
+Q
+Q
+q
+Q
+Q
+ 
+endstream
+endobj
+30 0 obj
+<<
+/Nums [ 0 31 0 R 1 32 0 R 2 33 0 R 3 34 0 R ]
+>>
+endobj
+31 0 obj
+<<
+/S /D /St 1
+>>
+endobj
+32 0 obj
+<<
+/S /D /St 2
+>>
+endobj
+33 0 obj
+<<
+/S /D /St 3
+>>
+endobj
+34 0 obj
+<<
+/S /D /St 4
+>>
+endobj
+xref
+0 35
+0000000000 65535 f 
+0000000073 00000 n 
+0000000124 00000 n 
+0000000231 00000 n 
+0000000343 00000 n 
+0000000448 00000 n 
+0000000653 00000 n 
+0000000819 00000 n 
+0000001042 00000 n 
+0000001245 00000 n 
+0000001435 00000 n 
+0000001628 00000 n 
+0000001865 00000 n 
+0000002033 00000 n 
+0000002204 00000 n 
+0000002436 00000 n 
+0000002542 00000 n 
+0000002823 00000 n 
+0000002897 00000 n 
+0000003008 00000 n 
+0000003134 00000 n 
+0000003287 00000 n 
+0000003416 00000 n 
+0000003538 00000 n 
+0000003660 00000 n 
+0000003770 00000 n 
+0000003850 00000 n 
+0000013114 00000 n 
+0000020462 00000 n 
+0000030022 00000 n 
+0000030462 00000 n 
+0000030530 00000 n 
+0000030564 00000 n 
+0000030598 00000 n 
+0000030632 00000 n 
+trailer
+<<
+/ID 
+[<7988315ee95d60413f002d2cc302a264><7988315ee95d60413f002d2cc302a264>]
+% ReportLab generated PDF document -- digest (http://www.reportlab.com)
+
+/Info 16 0 R
+/Root 15 0 R
+/Size 35
+>>
+startxref
+30666
+%%EOF

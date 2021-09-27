@@ -1,0 +1,197 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html><head></head><body>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div class="fluid-row">
+
+
+
+<h1 class="title toc-ignore">End-term project: Advanced Statistical Computing 2020</h1>
+
+</div>
+
+
+<div class="section level1">
+<h1>Instructions</h1>
+<p>In this project you will use nothing but code to solve a challenging modeling problem in insurance. The tasks below walk you through the modeling process. Do not hand in a point-by-point reply, however. Your submission should have the form of a coherent report.</p>
+<div class="section level3">
+<h3>Form</h3>
+<p>The following would be a suitable structure:</p>
+<ol style="list-style-type: decimal;">
+<li><em>Introduction</em></li>
+<li><em>Methodolgy</em></li>
+<li><em>Simulation study</em></li>
+<li><em>Results</em></li>
+</ol>
+<p>All figures should have explanatory captions. Be concise in your writing, but provide enough details such that a fellow student seeing this for the first time would understand what’s going on. In particular,</p>
+<ul>
+<li>clearly state each algorithm that you use (and provide a reference to other packages in case you use them),</li>
+<li>clearly specify the method/parameters you use to obtain your results (like bootstrap type, number of replications, etc.).</li>
+</ul>
+</div>
+<div class="section level3">
+<h3>Submission</h3>
+<p>To hand in your submission, upload the following documents on Brightspace:</p>
+<ul>
+<li>a pdf file of your written report,</li>
+<li>the code you used to complete the assignment (preferably as .Rmd).</li>
+</ul>
+<p>All results and figures in the written report must be reproducible from the code.</p>
+</div>
+<div class="section level3">
+<h3>Tips for R markdown</h3>
+<p>You can specify options of a code chunk by starting it with <code>{r, option1 = v1, options = v2, ...}</code>. Here are a few useful ones:</p>
+<ul>
+<li><code>fig.cap=&quot;A caption&quot;</code>: adds captions to a figure.</li>
+<li><code>include=FALSE</code> hide code and output from document.</li>
+<li><code>echo=FALSE</code> hides only the code, but not the output.</li>
+</ul>
+<p>See <a rel="noopener" href="https://bookdown.org/yihui/rmarkdown-cookbook/hide-one.html">here</a> for more options.</p>
+</div>
+</div>
+<div class="section level1">
+<h1>The problem</h1>
+<div class="section level3">
+<h3>Context</h3>
+<p>ANV is an insurance company focusing on corporate clients. It offers different types of insurance policies (called business lines). In the last year two of the business lines were simultaneously affected by a huge claim related to a single client. The two business lines are:</p>
+<ul>
+<li><p><a rel="noopener" href="https://en.wikipedia.org/wiki/Professional_liability_insurance">Professional liability insurance</a> (PLI)</p></li>
+<li><p><a rel="noopener" href="https://en.wikipedia.org/wiki/Workers%27_compensation">Workers’ compensation</a> (WC)</p></li>
+</ul>
+<p>The problematic client holds policies from both business lines and messed up big time.</p>
+<p>To protect themselves from such risks in the future, ANV approaches a <em>reinsurance</em> company. Such companies offer insurance policies for other insurance companies. ANV has a rather specific idea how this policy should look like: For some threshold <span class="math inline">\(t = 100, 110, \dots, 200\)</span></p>
+<ul>
+<li>If <span class="math inline">\(PLI + WC \le t\)</span>, ANV pays the claim themselves.</li>
+<li>If <span class="math inline">\(PLI + WC &gt; t\)</span>, the reinsurance company pays the claim.</li>
+</ul>
+<p>Depending on the threshold <span class="math inline">\(t\)</span>, the reinsurance company asks the following price for the insurance: <span class="math inline">\(P(t) = 40\, 000 \exp(-t / 7)\)</span> (in million euros). ANV is only willing to buy the policy if its expected value <span class="math display">\[ V(t) = E[(PLI + WC) 1 (PLI + WC &gt; t)] \]</span> exceeds the price <span class="math inline">\(P(t)\)</span>. To make a decision, ANV want to use statistical modeling to approximate <span class="math inline">\(V(t)\)</span>.</p>
+</div>
+<div class="section level3">
+<h3>The data</h3>
+<p>The file <code>insurance.csv</code> contains data from clients that occurred losses in both PLI and WC business lines. There are three columns:</p>
+<ul>
+<li><code>ID</code>: client ID,</li>
+<li><code>PLI</code>: loss incurred for PLI (in million euros),</li>
+<li><code>WC</code>: loss incurred for WC (in million euros).</li>
+</ul>
+</div>
+<div class="section level3">
+<h3>The model</h3>
+<p>To simplify notation, define <span class="math inline">\(X_1 =\)</span> CLI and <span class="math inline">\(X_2 =\)</span> WC. To approximate <span class="math inline">\(V(t)\)</span>, we need a model for the joint distribution <span class="math inline">\(F_{X_1, X_2}\)</span> of both business lines. It is particularly important to adequately reflect the dependence between lines.</p>
+<p><a rel="noopener" href="https://en.wikipedia.org/wiki/Copula_(probability_theory)">Copula models</a> are very popular in such situations. In a copula model, the joint density <span class="math inline">\(f_{X_1, X_2}\)</span> is decomposed into <span class="math display">\[f_{X_1, X_2}(x_1, x_2) = f_{X_1}(x_1)f_{X_2}(x_2)c\bigl(F_{X_1}(x_1), F_{X_2}(x_2)\bigr),\]</span> where <span class="math inline">\(c(u_1, u_2)\)</span> is called  and induces the dependence between the marginals <span class="math inline">\(f_{X_1}\)</span> and <span class="math inline">\(f_{X_2}\)</span>. The function <span class="math inline">\(c\)</span> is the joint density of the probability integral transforms <span class="math inline">\(U_1 = F_{X_1}(X_1)\)</span> and <span class="math inline">\(U_2 = F_{X_2}(X_2)\)</span>.</p>
+<p>Preliminary experiments suggested the following parameteric models:</p>
+<ul>
+<li><span class="math inline">\(f_{X_1}(\cdot; \mu_1, \sigma_1) \sim \mathrm{Lognormal}(\mu_1, \sigma_1)\)</span>, <span class="math inline">\(\mu_1 \in \mathbb R, \sigma_1 &gt; 0\)</span>.</li>
+<li><span class="math inline">\(f_{X_2}(\cdot; \mu_2, \sigma_2) \sim \mathrm{Lognormal}(\mu_2, \sigma_2)\)</span>, <span class="math inline">\(\mu_2 \in \mathbb R, \sigma_2 &gt; 0\)</span>.</li>
+<li><span class="math inline">\(c(\cdot; \theta) \sim \mathrm{Joe}(\theta), \theta \ge 1\)</span>.</li>
+</ul>
+</div>
+</div>
+<div class="section level1">
+<h1>Tasks</h1>
+<ol style="list-style-type: decimal;">
+<li><p>Give a high-level introduction to the scientific problem in your own words. Illustrate the dependence in the data with a graph.</p></li>
+<li><p>Give a precise mathematical specification of the model (similar to the above).</p></li>
+<li><p>Explain how maximum likelihood estimation can be used to estimate the parameters of <span class="math inline">\(f_{X_j}, j = 1, 2\)</span>. When implementing the method, try to come up with sensible starting parameters (depending on the input data) to speed up optimization.</p></li>
+<li><p>If the probability integral transforms <span class="math inline">\(U_j = F_{X_j}(X_j), j = 1, 2\)</span> were observed, we could also estimate the copula parameter <span class="math inline">\(\theta\)</span> by MLE. However, we might use <em>pseudo-observations</em> <span class="math inline">\(\hat U_j = F_{\hat \mu_j, \hat \sigma_j}(X_j), j = 1, 2\)</span> and use those for estimation. Write a function that fits the parameter of a Joe copula model. Explain why this might work.</p></li>
+<li><p>Now write a function that estimates all model parameters as follows:</p>
+<ol style="list-style-type: lower-roman;">
+<li>Compute estimates <span class="math inline">\((\hat \mu_1, \hat \sigma_1)\)</span> by maximum likelihood.</li>
+<li>Compute estimates <span class="math inline">\((\hat \mu_2, \hat \sigma_2)\)</span> by maximum likelihood.</li>
+<li>Set <span class="math inline">\(\hat U_j = F_{\hat \mu_j, \hat \sigma_j}(X_j)\)</span>, <span class="math inline">\(j = 1, 2\)</span> and estimate the parameters of a Joe copula model for <span class="math inline">\((\hat U_1, \hat U_2)\)</span>.</li>
+</ol>
+<p>To compute the density of the Joe copula, use</p>
+<pre class="r"><code>library(copula)
+# Joe(theta)-density evaluated at u; u is a (n x 2) matrix
+dCopula(u, joeCopula(theta)) </code></pre></li>
+<li><p>Write a function that simulates from the joint model for <span class="math inline">\((X_1, X_2)\)</span> for a given set of parameters <span class="math inline">\((\mu_1, \sigma_1, \mu_2, \sigma_2, \theta)\)</span>. To simulate <code>n</code> samples from a Joe copula with parameter <span class="math inline">\(\theta\)</span>, you can use <code>rCopula(n, joeCopula(theta))</code>.</p></li>
+<li><p>Generate simulated data from an estimated model (from step 4). Compare the simulated data with the observed data. If your implementation are correct, the two data sets should look similar. Illustrate how the properties of the data change when you increase/decrease a parameter.</p></li>
+<li><p>We want to better understand the inner workings of our method for parameter estimation. To do so, we conduct a simulation study. Fix <span class="math inline">\(\mu_1 = 1, \sigma_1 = 2, \mu_2 = 3, \sigma_1 = 0.5, \theta = 2\)</span>. For <span class="math inline">\(r = 1, \dots, 100\)</span>:</p>
+<ol style="list-style-type: lower-roman;">
+<li>Simulate <span class="math inline">\(n\)</span> observations <span class="math inline">\((X_{i, 1}, X_{i, 2})\)</span>, <span class="math inline">\(i = 1, \dots, n\)</span> from the joint model.</li>
+<li>Fit the model parameters while tracking the time it takes (for example using <code>system.time()</code>).</li>
+</ol>
+<p>Then compute the RMSE for each parameter and method. <em>(This will run for a while, so better test your code with less replications first.)</em></p>
+<p>Repeat the whole procedure for <span class="math inline">\(n = 200, 500, 1000\)</span> and plot the RMSE and average computing time as functions of <span class="math inline">\(n\)</span>. If your implementation is correct, the RMSE should be decreasing in <span class="math inline">\(n\)</span>. Which parameter values seem easier/harder to estimate? Can you explain why? How does the computation time scale with respect to the sample size?</p></li>
+<li><p>Now fit all model parameters to the observed data. Explain how to compute the expected payout of the reinsurance <span class="math inline">\(V(t) = E[1(X_1 + X_2 &gt; t)(X_1 + X_2)]\)</span>, <span class="math inline">\(t \in \mathbb R\)</span>, using Monte Carlo simulation. Make a graph of <span class="math inline">\(V(t)\)</span> for <span class="math inline">\(t = 100, 110, \dots, 200\)</span> based on <span class="math inline">\(10^5\)</span> Monte Carlo samples.</p></li>
+<li><p>You will see that the the <span class="math inline">\(V(t)\)</span> values are quite noisy because we’re dealing with highly improbable events. Compute the values again but this time using importance sampling. (<em>Hint: generate data from the same model but change the parameters such that the events of interest become more likely</em>.)<br/>
+Plot <span class="math inline">\(V(t)\)</span> again for <span class="math inline">\(t = 100, 110, \dots, 200\)</span> and compare it to the price <span class="math inline">\(P(t)\)</span> asked by the reinsurance company. At which value of <span class="math inline">\(t\)</span> should the company buy the reinsurance policy?</p></li>
+<li><p>Because our model parameters are estimated, <span class="math inline">\(V(t)\)</span> is only an estimated quantity (even when ignoring the MC approximation error). Use a bootstrap method to compute <span class="math inline">\(80\%\)</span> confidence intervals for <span class="math inline">\(V(t)\)</span>. Explain your implementation and why it does/doesn’t account for a) estimation error, b) MC approximation error. Add the confidence intervals to the plot in 10. Does that change your recommendation in 10?</p></li>
+</ol>
+</div>
+
+
+
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" src="/d2l/common/math/MathML.js?v=20.20.9.24432-31 "></script><script type="text/javascript">document.addEventListener('DOMContentLoaded', function() { D2LMathML.DesktopInit('https://s.brightspace.com/lib/mathjax/2.7.4/MathJax.js?config=MML_HTMLorMML','https://s.brightspace.com/lib/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML','130'); });</script></body></html>

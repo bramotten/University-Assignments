@@ -1,0 +1,53 @@
+@include "16bitJumper.wasm"
+
+.data MyRegisters : REGISTERS
+@include "register_constants.wasm"
+
+.code MyCode : REGSTACK, MyRegisters
+LOADI   $s1, 1
+LOADI   $s2, 2
+LOADI   $arg1, 0x05
+JSR     function1
+HALT
+
+# ---------------------
+function1:    
+SUBI    $sp, $sp, 3           # save to stack
+SW      $ra, 2, $sp
+SW      $s1, 1, $sp
+SW      $s2, 0, $sp
+
+COPY    $s1,   $arg1
+LOADI   $s2,   0
+
+JSR     function2            # call function2
+ADD     $s2,   $s2,  $val1
+SUBI    $s1,   $s1,  1
+COPY    $arg1, $s1  
+JSR     function2            # call function2
+ADD     $s2,   $s2,  $val1
+SUBI    $s1,   $s1,  1
+COPY    $arg1, $s1  
+JSR     function2            # call function2
+ADD     $val1,   $s2,  $val1 # set return value
+
+LW      $ra, 2, $sp          # load from stack
+LW      $s1, 1, $sp
+LW      $s2, 0, $sp
+ADDI    $sp, $sp, 3
+RETURN  $ra
+
+# ---------------------
+function2:
+SUBI    $sp, $sp,2           # save to stack
+SW      $ra, 1, $sp
+SW      $s1, 0, $sp
+
+COPY    $s1, $arg1
+# here in the future we might call other functions
+ADD     $val1, $s1, $s1      # set return value
+
+LW      $ra, 1, $sp          # load from stack
+LW      $s1, 0, $sp
+ADDI    $sp, $sp, 2
+RETURN  $ra

@@ -1,0 +1,38 @@
+@include "CalculatorWithLoops.wasm"
+
+# naming some registers and setting initial values
+.data MyRegisters  : REGISTERS
+0x1: WORD a 2           # first  number to multiply
+0x2: WORD b 5           # second number to multiply
+0x3: WORD result 0      # should store a*b at the end of program
+0x4: WORD bitlength 8   # number of bits
+0x5: WORD currentBit 0  # current bit
+0x6: WORD mask 1        # used for bit masking
+0x7: WORD nextb 	    # very cool
+
+
+.code MyCode  : LOOPS_MACHINE, MyRegisters
+
+# Deal with a 1.
+multiplexer:
+	# Add A and result.
+	ADD result, result, a
+    BRA middle
+
+middle:
+    # Shift mask and a left 1 bit.
+	SHLI mask, mask, 0x1
+	SHLI a, a, 0x1
+
+	ADDI  currentBit, currentBit, 1
+	BNE   currentBit, bitlength, stpp   # jump back to start
+    BRA   start
+
+start:   
+
+	# Check if next bit is 1.
+	AND nextb, mask, b
+	BNZ nextb, multiplexer
+
+stpp:
+    HALT

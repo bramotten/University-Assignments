@@ -1,0 +1,436 @@
+---
+title: "ASC project by Bram Otten (s2330326) [Oct 2020]"
+output:
+  pdf_document:
+    fig_caption: yes
+# bibliography: Temp.bib
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+rm(list = ls())
+set.seed(42)
+setwd("C:/Users/Bram/Google Drive/MSc Statistics/Advanced Statistical Computing/Exam")
+library(readr)
+data <- read_csv("insurance.csv") # n = 648; columns: ID, PLI, WC
+library(copula)
+fifty <- 50 # can make small for waaaaay quicker knitting
+```
+
+# Introduction
+
+An insurance company provides professional liability insurance (PLI) and worker's compensation (WC) insurance. These two "business lines" do not seem independent and thus do seem risky. (E.g., the maximum PLI and maximum WC claim correspond to the same client.)
+
+
+The insurance company wants to be (re)insured, desiring a policy that only pays out when the combined PLI and WC claim of a single client exceeds a threshold $t \in \{100, 110, \ldots, 200\}$. (Conversely and as introduction of some notation: the insurance company will pay the claim itself when $X_1 + X_2 \leq t$; $X_1$ and $X_2$ denote the amount of the PLI and WC claims in million Euros respectively.)
+
+The reinsurance company asks $P(t) = 40000 \exp(-t / 7)$ million Euros for this policy. The (original) insurance company is willing to buy the policy if $P(t) < V(t) = \mathbb{E}(X_1 + X_2) 1_{X_1 + X_2 > t}$. Since the future values of $X_1$ and $X_2$ are not known, $V(t)$ must be approximated somehow -- simulation will be used in this project. $P(t)$ and the result of _not_ using simulation but only real historical data to come up with $V(t)$ are shown in figure \ref{fig:plot1}. $t < 140 \iff V(t) > P(t)$ then (a discrete boundary because of the indicator and lack of randomness). 
+
+```{r echo = FALSE, fig.height = 2.8, fig.cap = "\\label{fig:plot1}\\textbf{Left:} Black dots denote values of $V(t)$ based (naively) on only our historical data. Red line $P(t) = 40000 \\exp(-t / 7)$. $t < 140 \\iff V(t) > P(t)$ then (a discrete boundary because of the indicator and lack of randomness). \\textbf{Right:} red and green histograms of historical realizations of $X_1$ and $X_2$ respectively."}
+par(mfrow=c(1,2))
+P <- function(t) 40000 * exp(-t / 7)
+V <- function(t, x1, x2) mean((x1 + x2) * ((x1 + x2) > t))
+t <- seq(100, 200, 10)
+Vt <- sapply(t, V, data$PLI, data$WC)
+P <- function(t) 40e3 * exp(-t / 7)
+smooth_t <- seq(100, 200, length.out = 1000)
+Pt <- P(smooth_t)
+plot(t, Vt, pch = 19, ylim = c(0, 0.21), ylab = "Amount in million Euros")
+lines(smooth_t, Pt, col = "red")
+cPLI <- rgb(1,0,0,0.4)
+cWC <- rgb(0,1,0,0.4)
+hist(data$PLI, breaks = 40, prob = TRUE, col = cPLI, 
+     main = "", xlab = "Amount in million Euros")
+hist(data$WC, breaks = 40, prob = TRUE, add = TRUE, col = cWC)
+```
+
+This report will describe a modelling process the (original) insurance company may use to model $V(t)$ and use the outcome to decide whether insuring itself with this policy is a good idea. The report will not only contain the final answers but also a bit of the journey -- if we are allowed to be meta: it will follow the tasks outlined in the exercise sequentially. 
+
+\clearpage
+
+# Methodology
+
+To approximate \(V(t)\), we need a model for the joint distribution \(F_{X_1, X_2}\). The two random variables (again, denoting the PLI and WC business lines) are presumed to _not_ be independent. 
+
+With \(c(u_1, u_2)\) a "copula density" describing the dependence between the marginals (\(f_{X_1}\) and \(f_{X_2}\)), the joint density \[f_{X_1, X_2}(x_1, x_2) = f_{X_1}(x_1)f_{X_2}(x_2)c\bigl(F_{X_1}(x_1), F_{X_2}(x_2)\bigr).\] The function \(c\) is the joint density of the probability integral transforms \(U_1 = F_{X_1}(X_1)\) and \(U_2 = F_{X_2}(X_2)\).
+
+We assume the following based on previous experiments (and because we are told to do so in this assignment):
+
+* \(f_{X_1}(\cdot; \mu_1, \sigma_1) \sim \mathrm{Lognormal}(\mu_1, \sigma_1)\), \(\mu_1 \in \mathbb R, \sigma_1 > 0\);
+* \(f_{X_2}(\cdot; \mu_2, \sigma_2) \sim \mathrm{Lognormal}(\mu_2, \sigma_2)\), \(\mu_2 \in \mathbb R, \sigma_2 > 0\); and
+* \(c(\cdot; \theta) \sim \mathrm{Joe}(\theta), \theta \geq 1\). A little more information on this can be found in [the documentation of the `copula` package in R](https://cran.r-project.org/web/packages/copula/copula.pdf) and [the Wikipedia page for copulas](https://en.wikipedia.org/wiki/Copula_(probability_theory)). (There are two URLs hidden in the previous sentence.)
+
+## Estimating marginal densities
+
+For both $j=1, 2$, $\mu_j$ and $\sigma_j$ can be estimated using maximum likelihood estimation. The notation above is equivalent to \(\ln(X_j) \sim \mathrm{Normal}(\mu_j, \sigma_j)\), so we can use the known results for a normal distribution. 
+
+```{r}
+ln_X1 <- log(data$PLI)
+mu1_mle <- mean(ln_X1)
+sigma1_mle <- sd(ln_X1)
+
+ln_X2 <- log(data$WC)
+mu2_mle <- mean(ln_X2)
+sigma2_mle <- sd(ln_X2)
+
+# Analytic solution:
+c(mu1_mle, sigma1_mle, mu2_mle, sigma2_mle)
+```
+
+We could alternatively let `R`'s `optim()` minimize the negative log likelihood, but that method makes no fewer assumptions. My instinct would be to use what are already the analytic solutions as starting values, so this really makes no sense. It is implemented below anyway. The specific method does not matter because we start in a (local) optimum. 
+
+```{r}
+lognormal_ll <- function(theta, x) sum(log(dlnorm(x, theta[1], theta[2])))
+theta1_mle <- optim(c(mu1_mle, sigma1_mle), 
+                    function(theta) - lognormal_ll(theta, data$PLI))
+mu1_mle <- theta1_mle$par[1]
+sigma1_mle <- theta1_mle$par[2]
+
+theta2_mle <- optim(c(mu2_mle, sigma2_mle), 
+                    function(theta) - lognormal_ll(theta, data$WC))
+mu2_mle <- theta2_mle$par[1]
+sigma2_mle <- theta2_mle$par[2]
+
+# "Optimized" solution:
+c(mu1_mle, sigma1_mle, mu2_mle, sigma2_mle)
+```
+
+\clearpage
+
+The fit (practically of either but specifically of $\mu_{1, \text{MLE}} = 1.98, \sigma_{2, \text{MLE}} = .513, \mu_{2, \text{MLE}} = 3.00,$ and $\sigma_{2, \text{MLE}} = .311$) is shown in figure \ref{densities}.
+
+```{r echo = FALSE, fig.height = 3, fig.cap = "\\label{densities}\\textbf{Left:} PLI / $X_1$ histogram with MLE lognormal density line. \\textbf{Right:} WC / $X_2$ histogram with MLE lognormal density line. The MLE parameters are $\\mu_{1, \\text{MLE}} = 1.98, \\sigma_{2, \\text{MLE}} = .513, \\mu_{2, \\text{MLE}} = 3.00,$ and $\\sigma_{2, \\text{MLE}} = .311$."}
+par(mfrow=c(1,2))
+hist(data$PLI, breaks = 70, prob = TRUE, col = cPLI,
+     xlab = "Amount in million Euros", main = "")
+x <- seq(0.001, 80, by = .001)
+lines(x, dlnorm(x, mu1_mle, sigma1_mle), lwd = 2)
+
+hist(data$WC, breaks = 70, prob = TRUE, col = cWC,
+     xlab = "Amount in million Euros", main = "")
+x <- seq(0.001, 80, by = .001)
+lines(x, dlnorm(x, mu2_mle, sigma2_mle), lwd = 2)
+```
+
+<!-- \clearpage -->
+
+## Estimating copula density
+
+Remember that:
+
+* The function \(c\) is the joint density of the probability integral transforms \(U_1 = F_{X_1}(X_1)\) and \(U_2 = F_{X_2}(X_2)\); and
+* \(c(\cdot; \theta) \sim \mathrm{Joe}(\theta), \theta \ge 1\).
+
+We can use pseudo-observations \(\hat U_j = F_{\hat \mu_j, \hat \sigma_j}(X_j), j = 1, 2\) for a $\hat{\theta}_\text{MLE}$ (instead of the actual probability transforms $U_j$). This cumulative distribution function is the one we have to use in combination with these assumed marginal densities. The historical realizations of $X_1$ and $X_2$ are perhaps not the most robust but will result in $\theta_\text{MLE}$. 
+
+We again find the maximally likely parameter by minimizing the negative log likelihood. We know $\theta \ge 1$, and its upper bound is also finite and definitely not $> 100$ (see figure \ref{big_theta} below -- such high values imply practically perfect correlation between $X_1$ and $X_2$). R's `optimize()` "is a combination of golden section search and successive parabolic interpolation, and was designed for use with continuous functions", detailed in [R.P. Brent's Algorithms for Minimization without Derivatives (2002)](https://maths-people.anu.edu.au/~brent/pub/pub011.html).
+
+```{r}
+U_hat <- cbind(plnorm(data$PLI, mu1_mle, sigma1_mle),
+               plnorm(data$WC, mu2_mle, sigma2_mle))
+neg_joe_ll <- function(theta, U = U_hat) {
+  - sum(dCopula(U, joeCopula(theta), log = TRUE))
+}
+theta_opt <- optimize(neg_joe_ll, c(1, 100))
+theta_mle <- theta_opt$minimum
+theta_mle
+```
+
+\clearpage
+
+# Simulation study
+
+The plan here is to stick to our assumed model but estimate expected values and variances of parameters and payout using different subsets of the data.
+
+## Recap of parameter estimation
+
+A function for the complete parameter estimation given some realizations of $X_1$ and $X_2$ is:
+
+```{r}
+MLEs <- function(X1, X2) {
+  # Note all kinds of assumptions as outlined above.
+  # This function is basically a copy-paste of all the above too.
+  # It works after clearing the workspace of everything but 
+  #  "data" and the library.
+  ln_X1 <- log(X1)
+  mu1_mle <- mean(ln_X1)
+  sigma1_mle <- sd(ln_X1)
+  
+  ln_X2 <- log(X2)
+  mu2_mle <- mean(ln_X2)
+  sigma2_mle <- sd(ln_X2)
+  
+  lognormal_ll <- function(theta, x) sum(log(dlnorm(x, theta[1], theta[2])))
+  theta1_mle <- optim(c(mu1_mle, sigma1_mle), 
+                      function(theta) - lognormal_ll(theta, X1))
+  mu1_mle <- theta1_mle$par[1]
+  sigma1_mle <- theta1_mle$par[2]
+  
+  theta2_mle <- optim(c(mu2_mle, sigma2_mle), 
+                      function(theta) - lognormal_ll(theta, X2))
+  mu2_mle <- theta2_mle$par[1]
+  sigma2_mle <- theta2_mle$par[2]
+  
+  U_hat <- cbind(plnorm(X1, mu1_mle, sigma1_mle),
+                 plnorm(X2, mu2_mle, sigma2_mle))
+  neg_joe_ll <- function(theta, U = U_hat) 
+    - sum(dCopula(U, joeCopula(theta), log = TRUE))
+  theta_opt <- optimize(neg_joe_ll, c(1, 100))
+  
+  c(mu1_mle, sigma1_mle, mu2_mle, sigma2_mle, theta_opt$minimum)
+}
+
+empirical_MLE_params <- MLEs(data$PLI, data$WC)
+empirical_MLE_params
+```
+
+\clearpage
+
+## Data simulation
+
+We can sample from the joint distribution that follows from a set of parameters as follows:
+
+```{r}
+joint_samples <- function(n, mu1, sigma1, mu2, sigma2, theta) {
+  x <- rCopula(n, joeCopula(theta))
+  return(cbind(qlnorm(x[,1], mu1, sigma1), qlnorm(x[,2], mu2, sigma2)))
+}
+
+set.seed(1)
+p <- empirical_MLE_params
+samples <- joint_samples(10^4, p[1], p[2], p[3], p[4], p[5])
+head(samples)
+```
+
+The distribution of the sum of the sampled values with the MLE parameters unsurprisingly looks a bit like the historical sum of $X_1$ and $X_2$ -- see figure \ref{default} for a comparison with 10000 samples.
+
+```{r echo = FALSE, fig.height = 4, fig.cap = "\\label{default}Yellow: `data$PLI + data$WC`. Blue: 10000 estimated $X_1 + X_2$. The parameters are $\\mu_{1, \\text{MLE}} = 1.98, \\sigma_{2, \\text{MLE}} = .513, \\mu_{2, \\text{MLE}} = 3.00,$ and $\\sigma_{2, \\text{MLE}} = .311$."}
+hist(data$PLI + data$WC, breaks = 100, prob = TRUE, col = rgb(1, 1, 0, 0.4),
+     xlab = "Amount in million Euros", main = "")
+hist(apply(samples, 1, sum), breaks = 100, prob = TRUE, 
+     col = rgb(0, 0, 1, 0.4), add = TRUE)
+```
+
+We see one very large `data$PLI + data$WC` that our sampled values never get close to. To obtain this large value, we can increase the mean(s) or (preferentially) the variance of our $X_1$ and $X_2$ compared to the MLE estimates. The effect of this is as expected and as we are familiar with. (Higher means imply higher sums, higher variances imply... higher variances (but uncorrelated ones).) This is illustrated in figure \ref{meanvarshift}.
+
+It is more interesting to report what changing $\theta$ does to our sample distribution. Remember that $\theta_\text{MLE} \approx 1.61$. Figure \ref{small_theta} shows samples with $\theta = 1.0001$.  
+
+Reducing $\theta$ seems to decrease the correlation between the random draws. A high $X_2$ draw is not as likely given a high $X_1$ draw. A larger $\theta = 10$ predictably does the reverse: it increases correlation between $X_1$ and $X_2$ -- see figure \ref{big_theta}. (Again with 10000 samples -- there will always be this many sampled values unless otherwise noted)
+
+```{r echo = FALSE, fig.height = 2.7, fig.cap = "\\label{small_theta}\\textbf{Left:}Yellow: `data$PLI + data$WC`. Blue: 10000 samples of estimated (almost MLE but with $\\theta = 1.0001$) $X_1 + X_2$. \\textbf{Right:} scatterplot (showing (lack of) correlation) between these sampled $X_1$ and $X_2$."}
+par(mfrow=c(1,2))
+set.seed(1)
+X <- joint_samples(10^4, p[1], p[2], p[3], p[4], 1.0001)
+hist(data$PLI + data$WC, breaks = 30, prob = TRUE, col = rgb(1, 1, 0, 0.4),
+     xlab = "Amount in million Euros", main = "", ylim = c(0, .06))
+hist(X[, 1] + X[, 2], breaks = 30, prob = TRUE, 
+     col = rgb(0, 0, 1, 0.4), add = TRUE)
+plot(X, pch = 19, col = rgb(0, 0, 0, 0.3))
+```
+
+```{r echo = FALSE, fig.height = 2.7, fig.cap = "\\label{big_theta}\\textbf{Left:}Yellow: `data$PLI + data$WC`. Blue: (ml) 10000 samples of estimated (almost MLE but with $\\theta = 10$) $X_1 + X_2$. \\textbf{Right:} scatterplot (showing correlation) between these sampled $X_1$ and $X_2$."}
+par(mfrow=c(1,2))
+set.seed(1)
+X <- joint_samples(10^4, p[1], p[2], p[3], p[4], 10)
+hist(data$PLI + data$WC, breaks = 50, prob = TRUE, col = rgb(1, 1, 0, 0.4),
+     xlab = "Amount in million Euros", main = "", ylim = c(0, .06))
+hist(X[, 1] + X[, 2], breaks = 50, prob = TRUE, 
+     col = rgb(0, 0, 1, 0.4), add = TRUE)
+# Theta seems to indicate correlation of extreme values
+plot(X, pch = 19, col = rgb(0, 0, 0, 0.3))
+```
+
+\clearpage
+
+```{r echo = FALSE, fig.height = 3, fig.cap = "\\label{meanvarshift}\\textbf{Left:}Yellow: `data$PLI + data$WC`. Blue: 10000 samples of estimated (almost MLE but with $\\mu_1 = \\mu_{1, \\text{MLE}} + 1$) $X_1 + X_2$. This results in a right-shift. \\textbf{Right:} Yellow: `data$PLI + data$WC`. Blue: 10000 samples of estimated (almost MLE but with $sigma_1 = \\sigma_{1, \\text{MLE}} + 1$) $X_1 + X_2$. This results in a fatter (right) tail."}
+par(mfrow=c(1,2))
+set.seed(1)
+X <- joint_samples(10^4, p[1] + 1, p[2], p[3], p[4], p[5])
+hist(data$PLI + data$WC, breaks = 30, prob = TRUE, col = rgb(1, 1, 0, 0.4),
+     xlab = "Amount in million Euros", main = "",)
+hist(X[, 1] + X[, 2], breaks = 60, prob = TRUE, 
+     col = rgb(0, 0, 1, 0.4), add = TRUE)
+X <- joint_samples(10^4, p[1], p[2] + 1, p[3], p[4], p[5])
+hist(data$PLI + data$WC, breaks = 30, prob = TRUE, col = rgb(1, 1, 0, 0.4),
+     xlab = "Amount in million Euros", main = "")
+hist(X[, 1] + X[, 2], breaks = 200, prob = TRUE, 
+     col = rgb(0, 0, 1, 0.4), add = TRUE)
+```
+
+## Parameter estimation stability
+
+```{r echo = FALSE}
+mu1 <- 1
+sigma1 <- 2
+mu2 <- 3
+sigma2 <- 0.5
+theta <- 2
+
+RMSEs <- matrix(nrow = 3, ncol = 6)
+N <- c(0200, 0500, 1000)
+R <- fifty
+for (i in 1:length(N)) {
+  start <- Sys.time()
+  
+  n <- N[i]
+  estimates <- matrix(nrow = R, ncol = 5)
+  for (r in 1:R) {
+    samples <- joint_samples(n, mu1, sigma1, mu2, sigma2, theta)
+    estimates[r,] <- MLEs(samples[, 1], samples[, 2])
+  }
+  # I've tried to replicate() the above and it didn't speed up 
+  
+  RMSEs[i, 1] <- sqrt(mean((estimates[, 1] - mu1)^2))
+  RMSEs[i, 2] <- sqrt(mean((estimates[, 2] - sigma1)^2))
+  RMSEs[i, 3] <- sqrt(mean((estimates[, 3] - mu2)^2))
+  RMSEs[i, 4] <- sqrt(mean((estimates[, 4] - sigma2)^2))
+  RMSEs[i, 5] <- sqrt(mean((estimates[, 5] - theta)^2))
+  RMSEs[i, 6] <- Sys.time() - start
+  
+  # end <- Sys.time()
+  
+  # print(paste("T:", end - start, "N:", n))
+}
+
+rownames(RMSEs) <- c("N=0200", "N=0500", "N=1000")
+colnames(RMSEs) <- c("mu1", "sigma1", "mu2", 'sigma2', 'theta', 'c. time')
+round(RMSEs, 4)
+```
+
+The root mean square errors of parameter estimation based on differently-sized samples (repeated a hundred times) when compared to the MLE valuesare listed above. We see:
+
+* the time it takes to find parameters does not scale 1-on-1 with the number of samples;
+* $f_{X_1}$ seems a bit easier to estimate than $f_{X_2}$;
+* all parameters get closer to the value they are in the historical data as the number of samples increases, though this pattern holds by far the least for $\theta$; and
+* $\theta$ is often relatively far from $\theta_\text{MLE} = 1.61$.
+
+\clearpage
+
+# Results
+
+## Expected payout
+
+In figure \ref{firstVt}, we see expected payout $V(t) = \mathbb{E}(X_1 + X_2) 1_{X_1 + X_2 > t}$ for $t = 100, 110, \ldots, 200$ for $10^5$ Monte Carlo samples of $X_1$ and $X_2$ with MLE model parameters from the observed data. 
+
+```{r fig.cap = "\\label{firstVt}Points represent expected payout $V(t) = \\mathbb{E}(X_1 + X_2) 1_{X_1 + X_2 > t}$ for $t = 100, 110, \\ldots, 200$ for $10^5$ Monte Carlo samples of $X_1$ and $X_2$ with MLE model parameters from the observed data. Red line $P(t) = 40000 \\exp(-t / 7)$."}
+V <- numeric(10)
+set.seed(2)
+samples <- joint_samples(10^5, p[1], p[2], p[3], p[4], p[5])
+S <- samples[, 1] + samples[, 2]
+t <- seq(100, 200, length.out = 11)
+for (ti in t) {
+  V[(ti - 100) / 10] <- mean(ifelse(S > ti, S, 0))
+}
+plot(seq(100, 200, length.out = 10), V, main = "", xlab = "t",
+     ylab = "V(t) and P(t) in million Euros (points and line resp.)",
+     ylim = c(0, Pt[1]))
+lines(smooth_t, Pt, col = "red")
+```
+
+\clearpage
+
+Payouts are improbable -- they only occur when $X_1 + X_2$ is "rarely" large. We can use importance sampling to make sure we sample enough of these rarely large values. The actual sampling takes place from a different distribution, but the process is de-biased using the joint density function. This "different distribution" is very similar to our "true" assumed one, but with:
+
+* $\mu_j = \mu_{j, \text{MLE}} + t \div 100$ for $j = 1,2$ to bias draws in the direction of (variable) $t$;
+* $\sigma_j = \sigma_{j, \text{MLE}} \times 1.5$ for $j = 1,2$ to make rare draws more likely; and
+* $\theta = \theta_\text{MLE} \times 1.5$ to increase correlation of $X_1$ and $X_2$ draws.
+
+```{r}
+joint_density <- function(non_summed_x, mu1, sigma1, mu2, sigma2, theta) {
+  dlnorm(non_summed_x[, 1], mu1, sigma1) * 
+  dlnorm(non_summed_x[, 2], mu2, sigma2) * 
+  dCopula(cbind(plnorm(non_summed_x[,1], mu1, sigma1), 
+                plnorm(non_summed_x[,2], mu2, sigma2)), 
+          joeCopula(theta))
+}
+
+importance_V_t <- function(n, mu1, sigma1, mu2, sigma2, theta, t) {
+  mu1p <- mu1 + t / 100
+  mu2p <- mu2 + t / 100
+  sigma1p <- sigma1 * 1.5
+  sigma2p <- sigma2 * 1.5
+  thetap <- theta * 1.5
+  
+  q <- rCopula(n, joeCopula(thetap))
+  y <- cbind(qlnorm(q[,1], mu1p, sigma1p), qlnorm(q[,2], mu2p, sigma2p))
+  y_sum <- apply(y, 1, sum)
+  
+  fx <- joint_density(y, mu1, sigma1, mu2, sigma2, theta)
+  fy <- joint_density(y, mu1p, sigma1p, mu2p, sigma2p, thetap)
+
+  return(mean(ifelse(y_sum > t, y_sum, 0) * fx / fy))
+}
+
+V <- sapply(t, importance_V_t, n = 10^5, 
+            mu1 = p[1], sigma1 = p[2], mu2 = p[3], sigma2 = p[4], theta = p[5])
+100 + (which(V > P(t)) - 1) * 10 # then buy the insurance policy
+```
+
+\clearpage 
+
+The resulting expected $V(t)$ of $10^5$ samples is shown in figure \ref{imp}. It is smoother than the previous differently obtained $V(t)$ shown in figure \ref{firstVt}.
+
+```{r echo = FALSE, fig.cap = "\\label{imp}White dots represent expected payout $V(t) = \\mathbb{E}(X_1 + X_2) 1_{X_1 + X_2 > t}$ for $t = 100, 110, \\ldots, 200$ for $10^5$ importance samples of $X_1$ and $X_2$ with true parameters ML estimated from the observed data and proposal distribution as described in the text. Red line $P(t) = 40000 \\exp(-t / 7)$."}
+plot(t, V, main = "", 
+     ylab = "V(t) and P(t) in million Euros (points and line resp.)")
+lines(smooth_t, Pt, col = "red")
+```
+
+\clearpage
+
+## Distribution of expected payout
+
+Since our model parameters are estimated, we run our sampling and $V(t)$ estimation multiple times (in this case 100) on a random subset of our data using the bootstrap method to compute (basic) 80% confidence intervals (CIs). This basic 80%-CI is supposed to contain 80% of parameter estimates if we were to estimate many times. For a parameter $\phi$ and "quantile function for bootstrap replicates" $q$, it is approximated by $(2\phi - q(0.1), 2\phi - q(0.9)).$ An artifact of this generally valid method is that values can become negative. A solution that does not seem necessary in this case is to create a CI for $\log(V)$ and take the $\exp$ of the found CI bound. Results are shown in figure \ref{impBoot} and the table below.
+
+```{r}
+n <- dim(data)[1]
+f <- function() {
+  index <- sample.int(n, replace = TRUE)
+  p <- MLEs(data$PLI[index], data$WC[index])
+  sapply(t, importance_V_t, n = 10^4, 
+         mu1 = p[1], sigma1 = p[2], mu2 = p[3], sigma2 = p[4], theta = p[5])
+}
+boot <- t(replicate(fifty * 2, f()))  # 100 rows, length(t)=11 columns
+means <- apply(boot, 2, mean)
+SDs <- apply(boot, 2, sd)
+CIs <- matrix(nrow = length(t), ncol = 2)
+for (i in 1:length(t))
+  CIs[i, ] <- unname(2 * means[i] - quantile(boot[, i], c(.9, .1)))
+table <- cbind(means, SDs, CIs, means - P(t))
+colnames(table)[3:5] <- c("80% basic CI low", "... high", 
+                          "mean-P=E[V(t)]-P(t)")
+rownames(table) <- paste(rep("t ="), t)
+# V(t) of importance sampling over 100 bootstrap replications:
+round(table, 5)
+```
+
+These CIs account for estimation error -- the error resulting from using the wrong parameters _given_ their family -- to an extent because they have been obtained with the bootstrap method. If the models do not generalize well to different subsets of the data, the CIs obtained using this method become larger. 
+
+The approximation error depends on the distribution families we consider. Since those families have been fixed in the introduction already, we have not reduced it at any point (including now with this bootstrapping). 
+
+\clearpage
+
+```{r echo = FALSE, fig.cap = "\\label{impBoot}White circles are still expected payout $V(t) = \\mathbb{E}(X_1 + X_2) 1_{X_1 + X_2 > t}$ for $t = 100, 110, \\ldots, 200$ for $10^4$ importance samples of $X_1$ and $X_2$ with true parameters ML estimated from the observed data and proposal distribution as described in the text. Black dots are means of 100 bootstrap estimates of $V(t)$ using in principle the same sampling and estimation method. Triangles represent upper and lower bounds of the basic 80% CI. Red line $P(t) = 40000 \\exp(-t / 7)$."}
+plot(t, means, main = "", ylim = c(0,0.045), pch = 19,
+     ylab = "V(t) and P(t) in million Euros (points and line resp.)")
+points(t, V)
+points(t, CIs[, 1], pch = 24)
+points(t, CIs[, 2], pch = 25)
+lines(smooth_t, Pt, col = "red")
+```
+
+## Final recommendation
+
+The bootstrap method indicates there is only a more than 10% chance of losing a non-trivial amount of money on the insurance policy for a few values of $t$. (About the trivial amount: e.g. $P(140) = 8.24 \times 10^{-5}$ which corresponds €82.44 (And $\mathbb{E}V(140)-P(140)$ is positive too!))
+
+I would personally only consider _not_ taking it at $t = 100$ since the policy is much more expensive there then at larger $t$. It is still only €25k but at other $t$s it is practically nothing. To be clear, I would still take the policy even if it had to be at $t=100$.  
+
+This is in accordance with the bootstrap results but can be explained more intuitively too. Even at $t=100$: if the worst case from the historical data is matched more than once every...
+
+```{r}
+max(data$PLI + data$WC) / P(100)
+```
+
+... years, the policy will pay off even when _no_ other claims in that time exceed $t$.
+
+The insurance policy (priced at $P(t)$) is simply very cheap compared to the (potential) sizes of the claims the "original" insurance company can face. This is reflected in the expected values we found by simulation too. 

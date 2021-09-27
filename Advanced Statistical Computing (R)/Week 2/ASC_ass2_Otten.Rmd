@@ -1,0 +1,106 @@
+Assignment for week 2
+=====================
+
+### Name: H.C. (Bram) Otten
+
+### ULCN: s2330326
+
+```{r echo=FALSE}
+rm(list=ls())
+set.seed(42)
+```
+
+### Monte Carlo
+
+Let $\mathbf{X}=X_1,X_2,\ldots,X_{100}$ be i.i.d. Gamma distributed values with shape and scale parameters $20$ and $1$, respectively. Define $T(\mathbf{X})=\min\{X_1,\ldots,X_{100}\}$.
+
+- Estimate and plot the sampling distribution of $T$.
+
+```{r}
+sample_X <- function() rgamma(n = 100, shape = 20, scale = 1)
+sample_T <- function() min(sample_X())
+N <- 10e4
+T_rep <- function(N) replicate(N, sample_T())
+T_rep_instance <- T_rep(N)
+hist(T_rep_instance, prob = TRUE, breaks = 40)
+```
+
+- Estimate mean and standard error of $T$.
+
+```{r}
+mean(T_rep_instance)
+sd(T_rep_instance)
+```
+
+- What is the approximation error for $E[T]$?
+
+(As in slide 10.)
+
+```{r}
+sd(T_rep_instance) / sqrt(N)
+```
+
+- Estimate $P(T<10)$ using simulation.
+
+Proportion of estimated $T(\mathbf{X})$s smaller than 10:
+
+```{r}
+mean(T_rep_instance < 10)
+```
+
+- Now work out $P(T<10)$ analytically, and calculate its value in R (hint: use the function `pgamma()`).
+
+$$
+P(T<10) = 1 - P(T \geq 10) = 1 - P(X_1 \geq 10, \ldots, X_{100} \geq 10)
+$$
+(Because of the iid-ness of the $X_i$s:)
+$$
+=  1 - P(X_1 \geq 10) \cdots P(X_{100} \geq 10) = 1 - P(X_1 \geq 10)^{100}
+$$
+
+$$ = 1 - (1 - P(X_1) < 10)^{100} $$
+
+```{r}
+1 - ((1 - pgamma(10, shape = 20, scale = 1))) ** 100
+```
+
+This is about
+```{r}
+abs(0.2925103 - 0.29257)
+```
+(i.e. not much) from our earlier estimate :).
+
+### Hypothesis tests
+
+After observing a sequence $\mathbf{X}=X_1,\ldots,X_{100}$ of natural numbers, we wish to test whether these numbers are Poisson distributed with mean $10$. To test this, we use the log of the likelihood as a test statistic: $T(\textbf{X})=\log P(\textbf{X};\lambda=10)$.
+
+- Decide on a rejection set $K$. Use simulation to estimate the size of the test given this rejection set $K$. Tweak the rejection set until the size is less than $0.01$, in order to control the Type I error probability.
+
+```{r}
+set.seed(42)
+# T_X <- function(X) log(prod(dpois(X, lambda = 10)))
+# ^ prod is a bit faster and the probabilities are big enough
+T_X <- function(X) sum(log(dpois(X, lambda = 10)))
+N <- 10e4
+T_X_reference_rep <- replicate(N, T_X(rpois(100, lambda = 10)))
+hist(T_X_reference_rep, prob = TRUE, breaks = 40)
+upper_K <- sort(T_X_reference_rep)[N * 0.01]
+upper_K
+```
+
+$K$ is $(-\infty, -273.9832]$. A test statistic in that range would be rejected in 1% of hypothesis tests if H0 were true (i.e. if $\mathbf{X}$ is Poisson distributed with mean 10). (So the probability of a type 1 error is 0.01). 
+
+A higher probability, though unlikely even if H0 were true, shouldn't lead us to a rejection of H0. But I'm not so sure, $K$ may be $\mathbb{R} \setminus [-276.0360, -240.0419]$ as in 
+```{r}
+sort(T_X_reference_rep)[c(N * 0.01 / 2, N - N * 0.01 / 2)]
+```
+
+- Now sample 100 outcomes from a geometric distribution with mean 10. Calculate the test statistic and see if you can comfortably reject the hypothesis that these data are Poisson. (Note that the mean of the geometric distribution with parameter $\theta$ is $(1-\theta)/\theta$.)
+
+```{r}
+X <- rgeom(100, prob = 1 / 11)
+T_X(X)
+```
+
+This is definitely in $K$, so comfortably reject that these data are Poisson(10).
+

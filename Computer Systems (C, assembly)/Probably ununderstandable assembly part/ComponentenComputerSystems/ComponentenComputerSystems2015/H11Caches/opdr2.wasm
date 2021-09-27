@@ -1,0 +1,39 @@
+@include "16bitDirectMappedCache.wasm"
+
+.data MyData : DATAMEM
+0d00:   WORD base1 0d0
+        WORD       0d1
+        WORD       0d2
+        WORD       0d3
+        WORD       0d4
+        WORD       0d5
+
+0d134:  WORD base2 0d6
+        WORD       0d7
+        WORD       0d8
+        WORD       0d9
+        WORD       0d10
+        WORD       0d11
+
+0d88:   WORD base3 
+
+.data MyRegisters  : REGISTERS
+0x0: WORD i1     0          # index relative to base1
+0x1: WORD i2     5          # index relative to base2
+0x2: WORD i3     0          # index relative to base2
+0x3: WORD temp1             # 
+0x4: WORD temp2             #
+0x5: WORD n      6          # number of loop iterations
+0x6: WORD sum               # 
+
+.code MyCode  : HARVARD, MyData, MyRegisters
+
+loop:   LW    temp1, base1,  i1
+        ADDI  i1,    i1,     1         # next address
+        LW    temp2, base2,  i2
+        SUBI  i2,    i2,     1         # previous address
+        ADD   sum,   temp1,  temp2  
+        SW    sum,   base3,  i3
+        ADDI  i3,    i3,     1          # next address
+        BNE   i1,    n,      loop       # if not finished loop  
+end:    HALT

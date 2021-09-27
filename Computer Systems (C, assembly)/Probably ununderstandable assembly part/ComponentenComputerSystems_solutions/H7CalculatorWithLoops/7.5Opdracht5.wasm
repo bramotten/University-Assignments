@@ -1,0 +1,21 @@
+@include "CalculatorWithLoops.wasm"
+# Vermenigvuldiging: 8 * 4 door herhaald optellen
+
+.data MyRegisters  : REGISTERS
+0x00: WORD result
+0x06: WORD b
+
+.code MyCode : LOOPS_MACHINE, MyRegisters
+  LOADI b, 4
+  LOADI result, 0
+
+  loop:
+    ADDI result, result, 8
+    SUBI b, b, 1
+    BNZ  b, loop
+ 
+  HALT		# einde programma
+
+
+
+

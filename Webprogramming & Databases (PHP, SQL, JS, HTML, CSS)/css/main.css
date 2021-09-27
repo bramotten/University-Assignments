@@ -1,0 +1,302 @@
+/* General stuff */
+
+html {
+  height: 100%;
+  display: flex;
+  font-size: 16px;
+}
+
+body {
+  font-family: sans-serif;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  min-height: 100%;
+  min-width: 100%;
+  background-color: #DDE0BD;
+  color: #000;
+  position: relative;
+}
+
+/* min-width of X pixels keeps the aside and nav simple */
+
+.wrapper {
+  min-width: 700px;
+  width: 100%;
+  /*max-width: 1200px;*/
+  min-height: 100%;
+  height: 100%;
+  margin: 0 auto;
+}
+
+a {
+  color: #050401;
+  text-decoration: none;
+}
+
+a:hover {
+  color: #757041;
+}
+
+
+/* Navigation/header */
+
+.nav {
+  background-color: #757041;
+  margin: 0;
+  border: 0;
+  min-width: 700px;
+  text-align: center;
+  height: 39px;
+}
+
+.nav ul {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  list-style: none;
+  padding-right: 2%;
+}
+
+.nav li {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  float: left;
+}
+
+
+.nav li a {
+  display: block;
+  color: #fff;
+  padding: 10px;
+  margin: 0;
+  border: 0;
+  font-weight: 600;
+}
+
+.currentNav {
+  background-color: #e3b23c;
+  height: 39px;
+}
+
+.home { 
+  float: left;
+  height: 39px;
+  width: 10%;
+}
+
+.home img {
+  padding-left: 12px;
+  height: 100%;
+  width: 100%;
+}
+
+.home li a {
+  /* Alignment doesn't matter for a logo,
+  this means more clickable space */
+  padding-left: 12px; 
+}
+
+.categories {
+  display: inline-block;
+}
+
+.categories active{
+  background-color: black;
+}
+
+.login {
+  float: right;
+}
+
+.categories a:hover,
+.login a:hover {
+  background-color: #e3b23c;
+  background-clip: padding-box;
+  color: #fff;
+  padding: 10px;
+  height: 39px;
+  /*padding-bottom: 9px;*/
+  border: 0;
+  margin: 0;
+}
+
+
+/* Aside */
+
+.aside {
+  position: absolute;
+  width: 13%;
+  min-width: 78px;
+  margin: 0;
+}
+
+
+.aside ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 1px;
+  position: relative;
+}
+
+.aside li a {
+  display: block;
+  padding: 10px;
+}
+
+.aside li {
+  border-bottom: solid 1px;
+}
+
+.aside li:last-child {
+  border-bottom: none;
+}
+
+.aside a:hover {
+  color: #000;
+  background-color: #e3b23c;
+}
+
+.currentAside {
+  background-color: #e3b23c !important;
+
+}
+
+
+/* Content */
+
+.content {
+  flex: 1;
+  margin: 0 2% 0 15%;
+  padding-top: 12px;
+  padding-bottom: 12px;
+  max-width: 83%;
+  min-height: 85%;
+}
+
+
+/* Footer */
+
+.footer {
+  max-width: 83%;
+  min-width: 498px;
+  margin: 0 2% 0 15%;
+  padding: 8px 0 30px 0;
+}
+
+.footer #totop {
+  float: left;
+}
+
+.footer #copy {
+  float: right;
+}
+
+
+/* Page specific stuff from here */
+
+/* Source of some of the upcoming shop-specific
+ * CSS: http://www.competa.com/blog/create-an-css-only-responsive-image-grid-with-ratio-scaling/ 
+ */
+
+
+/* apply a natural box layout model to all elements */
+
+*,
+*:before,
+*:after {
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+.shop ul {
+  list-style: none;
+  margin: 0 0 0 0;
+  padding: 0 0 0 0;
+  clear: both;
+}
+
+.shop ul .block {
+  width: 20%;
+  height: auto;
+  position: relative;
+  float: left;
+  margin: 0 2.5% 5% 2.5%;
+  padding: 0 0 20% 0;
+  transition: 0.8s ease;
+}
+
+.shop ul .block:hover span {
+  height: 50%;
+}
+
+@media screen and (max-width: 1280px) {
+  .shop ul .block {
+    width: 25%;
+    padding-bottom: 25%;
+  }
+}
+
+@media screen and (max-width: 1024px) {
+  .shop ul .block {
+    width: 33.33%;
+    padding-bottom: 33.33%;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .shop ul .block {
+    width: 50%;
+    padding-bottom: 50%;
+  }
+}
+
+@media screen and (max-width: 360px) {
+  .shop ul .block {
+    width: 100%;
+    padding-bottom: 100%;
+  }
+}
+
+.shop ul .block img {
+  max-width: none;
+  width: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.shop ul .block span {
+  width: 100%;
+  height: 3rem;
+  line-height: 3rem;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  padding: 0 1rem;
+  font-size: 1.3rem;
+  color: #DDE0BD;
+  background: rgba(0, 0, 0, 0.5);
+  transition: 0.8s ease;
+}
+
+.orders {
+  border-collapse: collapse;
+  text-align: center;
+}
+
+.orders tr:hover{
+  background-color:#e3b23c!important;
+}
+
+
+.orders thead th {
+  border-bottom: 1px solid #000;
+}
+
+.adminrow{
+  color: darkred;
+}
+

@@ -1,0 +1,26 @@
+@include "16bitHarvard.wasm"
+# Read a range of values starting from address 0x11 and
+# write them to a range starting at address 0x21 until
+# the value 0 has been written
+
+.data MyData : DATAMEM
+0x11: 	WORD start  0x01 
+       	WORD           0x02 
+	WORD           0x03
+       	WORD           0x04
+	WORD           0x05
+	WORD           0x00
+
+.data MyRegisters: REGISTERS
+0x00: WORD index 0
+0x01: WORD temp
+0x02: WORD dest 0x21 
+
+.code MyCode  : HARVARD, MyData, MyRegisters
+loop:	LW temp, start, index
+	SW temp, dest, index
+	ADDI index, index, 1 
+	BNZ temp, loop
+
+HALT
+

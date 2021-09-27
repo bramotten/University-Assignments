@@ -1,0 +1,88 @@
+@include "16bitJumper.wasm"
+
+.data MyData : DATAMEM
+0x00: 	WORD startind     0x05 
+       	WORD              0x04 
+	WORD              0x03
+       	WORD              0x02
+	WORD stopind      0x01
+
+.data MyRegs : REGISTERS
+@include "register_constants.wasm"
+
+.code MyCode : REGSTACK, MyRegs, MyData
+# the main program
+LOADI 	$s1, 0x0
+LOADI 	$s2, 0x4
+sortloop:
+COPY	$arg1, $s1
+COPY	$arg2, $s2
+JSR 	sortlist
+SUBI	$s2, $s2, 1
+BNE	$s1, $s2, sortloop
+HALT		# endless loop
+
+#--------------- procedure ------------------------
+# sort list from start to end
+# arg1: start index
+# arg2: end index
+sortlist:
+SUBI 	$sp,$sp,4
+SW	$ra, 0, $sp
+SW	$s1, 1, $sp
+SW	$s2, 2, $sp
+SW	$s3, 3, $sp
+
+COPY 	$s1, $arg1
+COPY 	$s2, $arg2
+step:
+COPY 	$arg1, $s1
+ADDI 	$s1,$s1,1
+COPY 	$arg2, $s1
+JSR  	sort
+BNE  	$s1,$s2,step
+
+LW 	$s3, 3, $sp
+LW 	$s2, 2, $sp
+LW 	$s1, 1, $sp
+LW 	$ra, 0, $sp
+ADDI	$sp,$sp,4
+RETURN	$ra
+
+#--------------- procedure ------------------------
+# sort to adjacent indices in list
+# arg1: index1
+# arg2: index2
+sort:
+SUBI 	$sp,$sp,4
+SW	$ra, 0, $sp
+SW	$s1, 1, $sp
+SW	$s2, 2, $sp
+SW	$s3, 3, $sp
+
+LW	$tmp1, 0x0,$arg1
+LW	$tmp2, 0x0,$arg2
+SUB	$tmp1, $tmp1, $tmp2
+ANDI	$tmp1, $tmp1, 0x8000
+BNZ	$tmp1, noswap
+JSR  	swap
+noswap: 
+
+LW 	$s3, 3, $sp
+LW 	$s2, 2, $sp
+LW 	$s1, 1, $sp
+LW 	$ra, 0, $sp
+ADDI	$sp,$sp,4
+RETURN	$ra
+
+#--------------- procedure ------------------------
+# swap to adjacent indices in list
+# arg1: index1
+# arg2: index2
+swap:
+LW	$tmp1, 0x0,$arg1
+LW	$tmp2, 0x0,$arg2
+SW	$tmp1, 0x0,$arg2
+SW	$tmp2, 0x0,$arg1
+RETURN	$ra
+

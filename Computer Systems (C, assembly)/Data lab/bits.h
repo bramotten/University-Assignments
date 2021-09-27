@@ -1,0 +1,12 @@
+int bitOr(int, int);
+int test_bitOr(int, int);
+int upperBits(int);
+int test_upperBits(int);
+int allOddBits();
+int test_allOddBits();
+int isAsciiDigit(int);
+int test_isAsciiDigit(int);
+int bitCount(int);
+int test_bitCount(int);
+unsigned float_i2f(int);
+unsigned test_float_i2f(int);

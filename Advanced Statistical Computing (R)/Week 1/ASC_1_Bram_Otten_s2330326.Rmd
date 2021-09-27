@@ -1,0 +1,187 @@
+---
+title: "Assignment Week 1"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+### Name: H.C. (Bram) Otten
+
+### ULCN: s2330326
+
+```{r, echo=FALSE}
+rm(list = ls(all = T))  # clears your workspace
+set.seed(42)
+```
+
+# EXERCISE I. Simulating from the triangular distribution
+
+The *triangular distribution* is the three-parameter family of distributions with probability density looking like this:
+
+```{r, echo= FALSE} 
+xa <- -1; xb <- 1; xc <- 0
+plot(0, xlim = c(-2, 2), ylim = c(0, 1.5), type = "n", 
+     ylab = "f(x | a, b, c)" , xlab = "x", asp = 1)
+segments(x0 = xa, x1 = xc, y0 = 0, y1 = 1, lty = 1, lwd = 2)
+segments(x0 = xb, x1 = xc, y0 = 0, y1 = 1, lty = 1, lwd = 2)
+
+segments(x0 = xc, y0 = 0, y1 = 1, lty = 2, col = 'red')
+
+```
+
+The three parameters $a$, $b$ and $c$ define the $x$ values at the left, right and top position of the triangle, respectively.
+In this assignment we focus on the symmetric case \(c = \frac{1}{2}(a + b)\) and even more in particular, the case \(a = -1, b = +1, c= 0\) which we will call the standard symmetrical triangular distribution.
+
+### (a) Derivation of cdf.
+
+Derive the cumulative distribution function \(F\) of the standard triangular distribution, and the quantile function $Q$.
+
+In the plot, we see density
+
+\[
+f(x) =
+\begin{cases}
+0  &\text{if } x < -1;\\
+1-|x|=1+x  &\text{if } -1 \leq x \leq 0;\\
+1-|x|=1-x  &\text{if } 0 < x \leq 1;\\
+0 &\text{if } x > 1.
+\end{cases}
+\]
+
+Which must be integrated (with a common sense $\frac{1}{2}$ added) for cumulative
+
+\[F(x) = 
+\begin{cases}
+0  &\text{if } x < -1;\\
+\int_{-1}^x(1+x)dx=\frac{(1+x)^2}{2}  &\text{if } -1 \leq x \leq 0;\\
+\frac{1}{2} + \int_0^x(1-x)dx=1-\frac{(1-x)^2}{2}  &\text{if } 0 < x \leq 1;\\
+1 &\text{if } x > 1.
+\end{cases}
+\]
+
+Quantile function $Q$ returns an $x$ below which a proportion $p$ of draws from $F$ would fall. So $Q: [0,1] \to [-1, 1]$ and $Q(p) = F^{-1}(p)$.
+
+Let's start with $x \in [-1, 0]$. $p=\frac{(1+x)^2}{2} \implies x=\pm\sqrt{2p}-1,$ but  only the positive version works with the values $p$ can take on. The story is similar for $x \in [0, 1]$ -- we must again take into account the values $x$ and $p$ can take on for 
+
+\[Q(p) = 
+\begin{cases}
+-1+\sqrt{2p}  &\text{if } 0 \leq p \leq \frac{1}{2};\\
+1-\sqrt{2-2p}  &\text{if } \frac{1}{2} \leq p \leq 1.
+\end{cases}
+\]
+
+### (b) Draw sample.
+
+Write R functions to generate a random sample of size \(n\) from the standard triangular distribution;
+
+1. using the trick that the sum of the two independent uniforms has a triangular distribution,
+
+```{r}
+unif_triangle_sampling <- function(n)
+  runif(n, min = -1, max = 0) + runif(n, min = 0, max = 1)
+hist(unif_triangle_sampling(10e4), breaks = 50, freq = FALSE)
+```
+
+2. using the inverse transform method,
+
+```{r}
+triangle_quantile <- function(p)
+  if (p <= 0.5) -1 + sqrt(2 * p) else 1 - sqrt(2 - 2 * p)
+
+inv_transform_triangle_sampling <- function(n)
+  sapply(runif(n, min = 0, max = 1), triangle_quantile)
+hist(inv_transform_triangle_sampling(10e4), breaks = 50, freq = FALSE)
+```
+
+3. using the acceptance-rejection method (*cf. Rizzo Example 3.7*),
+
+```{r}
+triangle_density <- function(x) { return(1 - abs(x)) }
+
+acc_rej_triangle_samping <- function(n) {
+  g <- dnorm
+  m <- sqrt(2 * pi)  # x = 0 in both cases
+  
+  n_samples <- 0
+  # total_n <- 0
+  z <- numeric(n)
+  while (n_samples < n) {
+    # total_n <- total_n + 1
+    x <- runif(1, min = -1, max = 1)  # sample from g
+    u <- runif(1)
+    y <- m * u * g(x)
+    if (y <= triangle_density(x)) {
+      n_samples <- n_samples + 1
+      z[n_samples] <- x   
+    }
+  }
+  # print(total_n)
+  z
+}
+hist(acc_rej_triangle_samping(10e4), breaks = 50, freq = FALSE)
+```
+
+
+4. and last, use the functions `system.time()` and `replicate()` to compare the efficiency of these methods.
+
+```{r}
+system.time(replicate(20, unif_triangle_sampling(20e3)))
+system.time(replicate(20, inv_transform_triangle_sampling(20e3)))
+system.time(replicate(20, acc_rej_triangle_samping(20e3)))
+```
+
+Sampling from the uniform is clearly most efficient, but consists of a trick that is not generally applicable. The inverse transform method works relatively well too, but required a quantile function. The acceptance-rejection method may be slowest, but it only required a density function and my choice for the standard normal as $g$ is a bit dubious -- in the order of half the samples from it are rejected.
+
+# EXERCISE II. Mixtures of Gaussians
+
+$X$, $Y$ and $Z$ are independent, and normally distributed with variance 1; their means are $-1$, $1$ and $0$ respectively. Now define the following two additional random variables:
+
+* $U = (X+Y)/2$
+* $V = \begin{cases}
+X&\text{if $Z<0$, and}\\
+Y&\text{otherwise}.
+\end{cases}$
+
+### (a) Plot histograms
+Generate a random sample from the distribution of $U$, and plot a histogram using the function `hist`. Do the same for the distribution of $V$.
+
+```{r}
+sample_X <- function(n) rnorm(n, mean = -1, sd = 1)
+sample_Y <- function(n) rnorm(n, mean = 1, sd = 1)
+sample_Z <- function(n) rnorm(n, mean = 0, sd = 1)
+hist(sample_Z(10e4), breaks = 100, freq = FALSE)  # for reference
+
+sample_U <- function(n) (sample_X(n) + sample_Y(n)) / 2
+hist(sample_U(10e4), breaks = 100, freq = FALSE)  # less variance
+
+sample_V <- function(n) ifelse(sample_Z(n) < 0, sample_X(n), sample_Y(n))
+# (This is not the first time I'm surprised at how R works.)
+hist(sample_V(30e4), breaks = 100, freq = FALSE)
+# (More samples because more variance)
+```
+
+### (b) What about the distributions?
+* Write down the densities of $U$ and $V$.
+
+$X$ and $Y$ are independent. Let's introduce $W = X + Y \sim N(-1, 1) + N(1, 1) = N(-1+1, 1+1)=N(0,2)$. (A proof would be a bit longer :).) Now, $W = 0.5U$. Using another basic property we have $U \sim N((0.5)(0), (0.5)^2(2)) = N(0, 0.5)$. So
+$$
+f_U(x) = \frac{1}{(0.5)\sqrt{2\pi}} \exp(-\frac{1}{2}(\frac{x}{(0.5)})^2),
+$$
+which is consistent with the histogram above (it's less variant than $Z$'s).
+
+The density of $V$ sort of follows from its definition:
+
+$$
+f_V(v) = F_Z(v)f_X(v) + (1-F_Z(v))f_Y(v).
+$$
+* Which of these densities is bimodal (has multiple local maxima)?
+
+$V$ is bimodal (although it's hard to see without a bigger difference in means or smaller variances). All other random variables are normal.
+
+* Which of these densities describes a mixture of the distributions of $X$ and $Y$?
+
+$V$, both with weights 0.5.
+
+* What distribution is described by the other density?
+
+As actually used for the density above, $U \sim N(0, 0.5)$. (I mean the normal distribution with mean 0 and variance 0.5 with that.)

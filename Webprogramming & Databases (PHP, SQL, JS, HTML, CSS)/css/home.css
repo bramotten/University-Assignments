@@ -1,0 +1,35 @@
+/* Extra CSS for the home page */
+
+.text {
+    display: inline-block;
+    width: 60%;
+    vertical-align: top;
+    padding-bottom: 18%
+}
+
+.picca {
+    display: inline-block;
+    width: 30%;
+    vertical-align: bottom;
+    text-align: right;
+    margin-right: 9%;
+}
+
+.picca img {
+    width: 130%;
+    height: 140%;
+}
+
+.title {
+    color: #757041;
+}
+
+.info {
+    resize: both;
+}
+
+.grt {
+    color: #757041;
+}
+
+

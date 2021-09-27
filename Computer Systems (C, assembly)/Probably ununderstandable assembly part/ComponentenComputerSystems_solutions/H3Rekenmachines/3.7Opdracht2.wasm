@@ -1,0 +1,8 @@
+@include "Rekenmachine_II.wasm" # Deze regel altijd toevoegen 
+
+.data MyData : REGISTERS # Het programma start met data in registers 
+
+.code MyCode : REKENMACHINE_II, MyData # Hier begint het programma
+LOADI $1, 512	# load 512
+ADDI $1, $1, 255	# add 255
+SUBI $1, $1, 256	# subtract 256

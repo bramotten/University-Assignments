@@ -1,0 +1,66 @@
+maxcontributionscat <- function(x)
+{
+        # return the maximum of the contributions for the 
+        # contingency table that is put into the matrix x
+        
+        C <- chisq.test(x)$residuals
+        max(abs(C))
+}
+
+bootstrapcat <- function(x, B, statistic, ...)
+{
+        #simulates B times a kxr contigency table with
+        #the same row and column totals as in matrix x
+        #under the null hypothesis of independence
+        #of row and column variable. Then computes
+        #for each simulated table the value of stastic.
+        #Arguments for statistic can be input in the function
+        #at the place of the dots.
+        #value:
+        #      the B bootstrap values of statistic
+        St <- numeric(B)
+        for(b in 1.:B) {
+                X <- simulcat(x)
+                St[b] <- statistic(X, ...)
+        }
+        St
+}
+
+
+simulcat <- function(x)
+{
+        #simulates a random contingency table with the same
+        #marginals as the contigency table in matrix x
+        #which has k rows and r columns,
+        #such that the cell frequency in cell (i,j) can be
+        #interpreted as an observation from the hypergeometrical
+        #distribution with expectation Ni.*N.j/n and variance
+        #Ni.*(n-Ni.)*N.j*(n-N.j)/(n^2*(n-1)) . 
+        #output: k x r matrix X which can be interpreted as a 
+        #kxr contigency table.
+        k <- nrow(x)
+        r <- ncol(x)
+        OM <- sum(x)
+        RM <- apply(x, 1., sum)
+        CM <- apply(x, 2., sum)
+        X <- matrix(0., k, r)
+        h <- 1.:r
+        for(i in 1.:(k - 1.)) {
+                while(RM[i] > 0.) {
+                        p <- cumsum(CM)/OM
+                        u <- runif(1.)
+                        t <- h[cumsum(p >= u) == 1.]
+                        X[i, t] <- X[i, t] + 1.
+                        RM[i] <- RM[i] - 1.
+                        CM[t] <- CM[t] - 1.
+                        OM <- OM - 1.
+                }
+        }
+        X[k,  ] <- CM
+        X
+}
+
+
+
+
+

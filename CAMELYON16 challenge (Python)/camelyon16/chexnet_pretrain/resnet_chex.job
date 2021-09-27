@@ -1,0 +1,16 @@
+#!/bin/bash
+
+#SBATCH -N 4
+#SBATCH -n 256
+####SBATCH -c 48
+#SBATCH -p knl_flat
+#SBATCH -t 1:45:00
+
+
+module load intel/mpi/2018u2
+export OMP_NUM_THREADS=4
+export TF_ADJUST_HUE_FUSED=1
+export TF_ADJUST_SATURATION_FUSED=1
+#export I_MPI_FABRICS=shm:tmi
+
+mpirun -np 256 -ppn 2 python resnet_main_chex.py --train_batch_size 4096 --train_steps 2000 --num_intra_threads 3 --num_inter_threads 1 --mkl=True  --data_dir=/scratch/shared/camelyon16/Processed/patch-based-classification/tf-records --model_dir /scratch/shared/camelyon16/resnet --use_tpu=False --kmp_blocktime 1 --checkpoint_path  model_512.ckpt-13583.data-00000-of-00001

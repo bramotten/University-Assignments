@@ -1,0 +1,175 @@
+---
+title: "Assignment Week 3"
+output: html_document
+---
+
+### Name: Bram Otten
+
+### ULCN: s2330326
+
+```{r label = preps, echo=FALSE}
+rm(list=ls(all.names = TRUE))
+set.seed(42)
+```
+
+We will compute or approximate the value of the expectation 
+
+$$I=E[\mathbb{1}(X > 1) X^2], \qquad X \sim \mathcal N(0, 1).$$
+
+### Exercise 1. Importance sampling
+
+- Obtain a Monte Carlo estimate of $I$ using importance sampling. (There are multiple solutions; make sure that your method is substantially more efficient than straightforward simulation from a normal distribution
+with mean zero.)
+
+
+```{r}
+f <- function(x) ifelse(x > 1, x ** 2, 0)
+true <- integrate(function(x) dnorm(x) * f(x), -Inf, Inf)[1]$value
+
+straightforwardI <- function(N) mean(f(rnorm(N)))
+
+importanceI <- function(N) {
+  # X ~ N(0, 1); Y ~ N(1, 1); g(X) = X ** 2 if X > 1, else 0
+  Y <- rnorm(N, mean = 1)
+  mean(f(Y) * dnorm(Y, mean = 0) / dnorm(Y, mean = 1))
+}
+
+N <- 10^4
+straight_rep <- replicate(N / 10, straightforwardI(N))
+importance_rep <- replicate(N / 10, importanceI(N))
+true
+mean(straight_rep)
+mean(importance_rep)
+```
+
+- Calculate the MC approximation error.
+
+```{r}
+approximation_error_list <- c(
+  straight_forward = sd(straight_rep),
+  importance = sd(importance_rep)
+)
+approximation_error_list
+```
+
+And for completeness:
+
+```{r}
+rmse <- function(x) sqrt(mean((x - true) ** 2))
+rmse_list <- c(
+  straight_forward = rmse(straight_rep),
+  importance = rmse(importance_rep)
+)
+
+rmse_list
+```
+
+
+### Exercise 2. Antithetic variables
+
+- This time use antithetic variables for computing $I$.
+
+```{r}
+antitheticI <- function(N) {
+  U <- runif(N / 2)
+  Z <- c(X = qnorm(U), X_tilde = qnorm(1 - U))
+  mean(f(Z))  # lol R
+}
+
+antithetic_rep <- replicate(N / 10, antitheticI(N))
+mean(antithetic_rep)
+```
+
+
+- Estimate the MC approximation error using simulation. Compare this to importance sampling.
+
+```{r}
+approximation_error_list <- c(
+  approximation_error_list,
+  antithetic = sd(antithetic_rep)
+)
+approximation_error_list
+```
+
+The approximation error of this antithetic variables method seems higher than that of importance sampling, but lower than that of plain / straightforward Monte Carlo sampling.
+
+```{r}
+rmse_list <- c(rmse_list, antithetic = rmse(antithetic_rep))
+rmse_list
+```
+
+
+- Now combine antithetic variables with importance sampling to achieve maximal accuracy.
+
+```{r}
+antiImportant <- function(N) {
+  # In antithetic's notation, X is now N(1, 1). Importance's Y is replaced by Z. 
+  U <- runif(N / 2)
+  Z <- c(X = qnorm(U, mean = 1), X_tilde = qnorm(1 - U, mean = 1))
+  mean(f(Z) * dnorm(Z, mean = 0) / dnorm(Z, mean = 1))
+}
+
+antiImportant_rep <- replicate(N / 10, antiImportant(N))
+mean(antiImportant_rep)
+```
+
+- Compute the MC approximation error and compare to the previous methods.
+
+```{r}
+approximation_error_list <- c(
+  approximation_error_list,
+  anti_important_mix = sd(antiImportant_rep)
+)
+approximation_error_list
+```
+
+This is a much smaller approximation error than the previous methods obtained.
+
+```{r}
+rmse_list <- c(rmse_list, anti_important_mix = rmse(antiImportant_rep))
+rmse_list
+```
+
+
+### Exercise 3. Metropolis-Hastings
+
+Let $f(x)=(2+\sin(1/x))\exp(-x^2)$.
+
+- Use the Metropolis-Hastings algorithm to sample from the distribution with density proportional to $f$, and plot a histogram. Use a suitable proposal distribution.
+
+Since $f = \psi$ is somewhat proportional to a normal density when its input is not too large, that seems like a handy proposal distribution. The $\sin(1/x)$ tends to 0 with large $x$ so a $\sigma=1$-normal's tails are fatter, but the "acceptance rate" is quick enough to work with this. 
+
+```{r}
+# Let's call f "psi" to not overwrite and follow the slides.
+psi <- function(x) (2 + sin(1 / x)) * exp(-x ** 2)
+N <- 10^6
+
+# Try a proposal
+hist(rnorm(N, mean = 0.1), prob = TRUE, breaks = 100,
+     border = NA, col=rgb(0, 0, 1, .5), ylim = c(0, 1))
+X <- seq(-3, 3, by = 0.011)  # avoids evaluating f at 0
+lines(X, psi(X) / 3.4)
+```
+
+
+```{r}
+g <- function(Z, x) dnorm(Z, mean = x)
+thresh <- function(Z, theta) 
+  psi(Z) * g(Z, theta) / (psi(theta) * g(theta, Z))
+
+x_list <- c(0.1, rep(NA, N - 1))
+for (t in 1:(N - 1)) {
+  Z <- rnorm(1, x_list[t], 1)
+  U <- runif(1)
+  x_list[t + 1] <- ifelse(U < thresh(Z, x_list[t]), Z, x_list[t])
+}
+
+mcmc_samples <- x_list[-c(1:1000)]
+```
+
+```{r}
+hist(mcmc_samples, prob = TRUE, breaks = 100,
+     col = rgb(1, 0, 0, .5), border = NA, ylim = c(0, 1))
+lines(X, psi(X) / 3.4)
+```
+

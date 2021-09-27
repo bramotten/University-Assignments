@@ -1,0 +1,359 @@
+---
+title: "Statistical Learning assignment 1"
+author: "H.C. (Bram) Otten (s2330326)"
+date: "24-11-2019"
+output:
+  pdf_document: default
+  'pdf_document: default': default
+editor_options:
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_knit$set(root.dir = "C:/Users/Bram/Google Drive/MSc/SL/a1")
+setwd("C:/Users/Bram/Google Drive/MSc/SL/a1")
+rm(list = ls())
+```
+
+> The purpose of this homework is to apply linear regression on a real data set. We will consider three ways of improving prediction accuracy: feature selection, ridge regression and the lasso. We will split the data set into two parts (training and test set), then fit the models on the training set (including choice of the best parameter using cross-validation) and test their performance on the separate test set.
+
+## Introductory analyses
+
+### 1
+
+Some properties of the data [(link)](http://www.timvanerven.nl/wp-content/uploads/teaching/statlearn2016/housing-p.data) are:
+
+* Title: Boston Housing Data
+* Sources:
+  (a) Origin:  This dataset was taken from the StatLib library which is
+               maintained at Carnegie Mellon University.
+  (b) Creator:  Harrison, D. and Rubinfeld, D.L. 'Hedonic prices and the 
+                demand for clean air', J. Environ. Economics & Management,
+                vol.5, 81-102, 1978.
+  (c) Date: July 7, 1993
+
+* Relevant Information: concerns housing values in suburbs of Boston.
+
+* Number of Instances: 506.
+
+* Number of Attributes: 13 continuous attributes (including "class"
+                        attribute "MEDV"), 1 binary-valued attribute.
+
+* Attribute Information:
+
+   1. CRIM      per capita crime rate by town
+   2. ZN        proportion of residential land zoned for lots over 
+                25,000 sq.ft.
+   3. INDUS     proportion of non-retail business acres per town
+   4. CHAS      Charles River dummy variable (= 1 if tract bounds 
+                river; 0 otherwise)
+   5. NOX       nitric oxides concentration (parts per 10 million)
+   6. RM        average number of rooms per dwelling
+   7. AGE       proportion of owner-occupied units built prior to 1940
+   8. DIS       weighted distances to five Boston employment centres
+   9. RAD       index of accessibility to radial highways
+   10. TAX      full-value property-tax rate per $10,000
+   11. PTRATIO  pupil-teacher ratio by town
+   12. B        1000(Bk - 0.63)^2 where Bk is the proportion of blacks 
+                by town
+   13. LSTAT    % lower status of the population
+   14. MEDV     Median value of owner-occupied homes in $1000's
+
+### 2
+
+```{r}
+data <- read.table("housing-p.data", header = TRUE)
+dim(data)
+head(data)
+str(data)
+# data$CHAS <- as.factor(data$CHAS) # the models should already do this
+train <- data[1:350,]
+test <- data[351:nrow(data),]
+all.equal(data, rbind(train, test))
+```
+
+Note that the data has not been shuffled before splitting into a training and test set.
+
+### 3
+
+We begin by fitting a least squares model on the training set, regarding MEDV ("median value of owner-occupied homes in $1000's") as dependent / output variable. 
+
+```{r}
+lmf <- lm(MEDV ~ ., train)
+```
+
+### 4
+
+```{r}
+summary(lmf)
+```
+
+The summary above shows coefficients and their estimated standards errors as found by a least squares model, as well as statistical significance of 'H0: this coefficient = 0' (in column `Pr(>|t|)`). Note that we use all variables but MEDV as regressors / features / independent variables / explanatory variables. (These are the first 13 columns of `data`.)
+
+There are a few assumptions we have to meet in order to justify using a linear model for interpreting the relationship between the variables in the data. Among these are (1) a linear relationship between independent and dependent variables (see following plots, MSE gives some indication of fit); and (2) that the mean of the residuals is close to 0 (ME in plot titles)). 
+
+```{r}
+par(mfrow = c(1,2))
+for (i in 1:2) { # change end to 13 for all (i.e. too many for a pdf) plots
+   lmf_i <- lm(paste("MEDV ~ ", colnames(data)[i]), data)
+   plot(data[, i], data$MEDV, xlab = i,
+        main = paste("MSE: ", round(mean(lmf_i$residuals ^ 2), 2), 
+                     "\nME: ", round(mean(lmf_i$residuals), 2)))
+   abline(lmf_i)
+}
+par(mfrow = c(1,1))
+```
+
+There are a few more assumptions, as listed [on this website](https://dimensionless.in/multiple-linear-regression-assumptions-of-linear-regression-a-z/). [It does not seem to be part of the assignment to check all of these manually and try to correct them.] Low multicollinearity (i.e. small correlations between 'independent' variables, resulting in low variance in finding the best coefficients) is of special interest because the models proposed later aim to deal with it. 
+
+```{r}
+# install.packages('usdm')
+library(usdm)
+vif(data[, -14])
+```
+
+A common rule of thumb for diagnosing a set of independent variables to be highly multicollinear is to check if the variance inflation factor ($1 / (1 - R^2_i)$) of any of the variables is greater than some threshold, e.g. 5 or 10 [(here is a paper with some critique on using a threshold and also links to the proposers of these thresholds)](https://link.springer.com/article/10.1007/s11135-006-9018-6). There seems to be some multicollinearity among our independent variables. 
+
+In any case, here follows a quick indication of our model's accuracy on the unseen test set.
+
+```{r}
+lmf_predictions <- predict(lmf, test)
+lmf_mse <- mean((test[, 14] - lmf_predictions) ^ 2)
+cat("Train MSE:", mean(lmf$residuals ^ 2), 
+    "\nTest MSE:", lmf_mse, "\n")
+total_ss <- sum((test[, 14] - mean(test[, 14])) ^ 2)
+lmf_reg_ss <- lmf_mse * length(test[, 14])
+(lmf_R2 <- 1 - lmf_reg_ss / total_ss)
+```
+
+## Cross-validation and regularization
+
+### 5
+
+In 5-fold cross-validation, we fit our model on four out of five parts of the training data, and evaluate on the fifth part. Each of the five parts is considered a test fold once, and the average error of these five iterations is taken to be the cv error. Compared to fitting on the whole training set, this results in only a bit more bias for each model, but a better estimate of prediction error (than `mean(lmf$residuals ^ 2` above).
+
+```{r}
+set.seed(1)
+s_train <- train[sample(nrow(train)),]
+K <- 5
+folds <- cut(seq(1, nrow(s_train)), breaks = K, labels = FALSE)
+cv_mse <- numeric(K)
+for (i in 1:K) {
+   test_indices <- which(folds == i, arr.ind = TRUE)
+   test_fold <- s_train[test_indices,]
+   train_folds <- s_train[-test_indices,]
+   lmf_i <- lm(MEDV ~ ., train_folds)
+   cv_mse[i] <- mean((test_fold[, 14] - predict(lmf_i, test_fold)) ^ 2)
+}
+lmf_5cv_mse <- mean(cv_mse)
+cat("5-fold cross-validation MSE:", lmf_5cv_mse, "\n")
+```
+
+### 6
+
+```{r}
+# install.packages("leaps")
+library(leaps)
+
+to_lm_input <- function(regressors) {
+   # Like everything else, this is not meant to be especially robust.
+   if ("(Intercept)" %in% regressors) {
+      regressors <- regressors[-which(regressors == "(Intercept)")]
+   } else {
+      regressors <- c(regressors, "-1")
+   }
+   regressorsp <- paste(regressors, collapse = " + ", sep = "")
+   return(paste("MEDV ~ ", regressorsp, sep = " "))
+}
+```
+
+Here, instead of fitting all regressors per test fold, we fit only the _best_ regressors (correcting for the number of degrees of freedom with something like the AIC). These best regressors have to be found seperately for each test fold to avoid evaluating over data already used in determining which of the (or how many) regressors are best. 
+
+```{r}
+subset_5cv_mse <- matrix(nrow = K, ncol = 13)
+for (k in 1:K) {
+   test_indices <- which(folds == k, arr.ind = TRUE)
+   test_fold <- s_train[test_indices,]
+   train_folds <- s_train[-test_indices, ]
+   rsti <- regsubsets(x = train_folds[, -14], y = train_folds[, 14], 
+                      nvmax = 13, method = "exhaustive")
+   for (n in 1:13) {
+      regressors <- names(which(summary(rsti)$which[n,]))
+      lm_kn <- lm(to_lm_input(regressors), train_folds)
+      subset_5cv_mse[k, n] <-
+         mean((test_fold[, 14] - predict(lm_kn, test_fold)) ^ 2)
+   }
+}
+(subset_5cv_mse_per_n <- apply(subset_5cv_mse, 2, mean))
+(best_5cv_n <- which.min(subset_5cv_mse_per_n))
+```
+
+Now we find the `best_5cv_n` regressors that are best on the whole training set, and use those to fit a new model. Note that no cross-validation is involved here -- we will compare full models on their actual test set prediction error later on in this report.
+
+```{r}
+train_subset <- regsubsets(x = train[, -14], y = train[, 14], 
+                           nvmax = best_5cv_n, method = "exhaustive")
+best_5cv_n_regressors <- names(which(summary(train_subset)$which[best_5cv_n,]))
+lm_subset <- lm(to_lm_input(best_5cv_n_regressors), train)
+subset_predictions <- predict(lm_subset, test)
+subset_mse <- mean((test[, 14] - subset_predictions) ^ 2)
+cat("Test MSE:", subset_mse, "\n")
+best_5cv_n_regressors
+```
+
+We see that AGE and INDUS are been left out.
+
+### 7
+
+```{r}
+library(MASS)
+```
+
+Shrinkage methods like ridge regression are a continuous version of subset selection -- they allow us to penalize coefficient magnitude. The best amount of penalty can be found using cross validation error (or its GCV approximation) again; this parameter is then used to fit a model on all training data. Rescaling (to prevent regressors that have only a small $\Delta$(MEDV) per $\Delta$(regressor) from being favoured) should happen automatically. 
+
+```{r}
+select(lm.ridge(MEDV ~ ., train, lambda = seq(0, 10, .001)))
+select(lm.ridge(MEDV ~ ., train, lambda = seq(3.5, 4.5, 0.0001)))
+ridge_gcv_lambda <- 3.96
+
+ridge <- lm.ridge(MEDV ~ ., train, lambda = ridge_gcv_lambda)
+ridge_predictions <- as.matrix(cbind(const = 1, test[-14])) %*% coef(ridge)
+ridge_mse <- mean((test[, 14] - ridge_predictions) ^ 2)
+cat("Test MSE:", ridge_mse, "\n")
+```
+
+### 8
+
+```{r}
+# install.packages("lars")
+library(lars)
+```
+
+Lasso regression is another shrinkage method. The difference between it and ridge regression is that, in coming up with the to-be-minimized error, the shrinkage parameter is multiplied with the norm of the coefficient instead of with the square.
+
+```{r}
+set.seed(1)
+X = as.matrix(train[,-14])
+y = as.matrix(train[,14])
+lambda_range1 <- seq(0, 10, .2)
+cvs1 <- numeric(length(lambda_range1))
+for (i in 1:length(lambda_range1)) {
+   cvs1[i] <- min(cv.lars(X, y, K = 5, type = "lasso", 
+                         s = lambda_range1[i], plot.it = FALSE)$cv)
+}
+plot(cvs1) 
+
+# Try good region again:
+lambda_range2 <- seq(20 * .2, 40 * .2, .01)
+cvs2 <- numeric(length(lambda_range2))
+for (i in 1:length(lambda_range2)) {
+   cvs2[i] <- min(cv.lars(X, y, K = 5, type = "lasso", 
+                          s = lambda_range2[i], plot.it = FALSE)$cv)
+}
+plot(cvs2)
+cbind(min(cvs1), min(cvs2))
+
+(lasso_5cv_lambda <- lambda_range2[which.min(cvs2)])
+lasso <- lars(X, y, type = "lasso")
+lasso_predictions <- predict.lars(lasso, as.matrix(test[,-14]),
+                                  mode = "lambda", s = lasso_5cv_lambda)$fit
+
+lasso_mse <- mean((test[, 14] - lasso_predictions) ^ 2)
+cat("Test MSE:", lasso_mse, "\n")
+```
+
+This test MSE seems high, so let us try another library as well. It is quicker and finds a parameter that ultimately works better on the test set but does not result in a lower 5-fold cv error on the train set, and will thus not be used. 
+
+```{r}
+set.seed(1)
+library(glmnet)
+lasso2 <- cv.glmnet(X, y, 
+                    alpha = 1, nfolds = 5, lambda = seq(0, 10, .001))
+lasso2_5cv_lambda <- lasso2$lambda.min
+(cv_lambdas <- c(lasso_5cv_lambda, lasso2_5cv_lambda)) # hmm...
+lasso2_predictions <- predict(lasso2, s = lasso2_5cv_lambda, 
+                      newx = as.matrix(test[,-14]))
+cat("Test MSE:", mean((test[, 14] - lasso2_predictions) ^ 2),
+    "(compare to", lasso_mse, "above)\n")
+
+# Mixing lambda's:
+lasso_predictions_object2 <- predict.lars(lasso, as.matrix(test[,-14]),
+                        mode = "lambda", s = lasso2_5cv_lambda)
+lasso_mse2 <- mean((test[, 14] - lasso_predictions_object2$fit) ^ 2)
+cat("Test MSE:", lasso_mse2, "\n")
+# That's lower, ofc possible since my earlier lambda search isn't perfect.
+
+# Then let's try this:
+min(cv.lars(X, y, K = 5, type = "lasso", 
+                         s = lasso_5cv_lambda, plot.it = FALSE)$cv)
+min(cv.lars(X, y, K = 5, type = "lasso", 
+                         s = lasso2_5cv_lambda, plot.it = FALSE)$cv)
+# CV error using the provided function _is_ lower for the s we found earlier --
+# we'll keep using it (so as not to use our test set in training). 
+```
+
+## Model comparison
+
+```{r echo = FALSE}
+cat(
+   " Least squares on full train set: R2 =",
+   1 - lmf_mse * nrow(test) / total_ss,
+   "\n",
+   "Best subset least squares (subset found with 5-fold cv): R2 =",
+   1 - subset_mse * nrow(test) / total_ss,
+   "\n",
+   "Ridge (shrinkage found with 5-fold cv): R2 =",
+   1 - ridge_mse * nrow(test) / total_ss,
+   "\n",
+   "Lasso (shrinkage found with 5-fold cv): R2 =",
+   1 - lasso_mse * nrow(test) / total_ss,
+   "\n",
+   "Mean of MEDV: ",
+   mean(data[, 14]),
+   "\n",
+   "Std dev of MEDV: ",
+   sd(data[, 14])
+)
+```
+
+A. The magnitude of difference in prediction error is small between the four models (which have all been fitted to the same training data). 
+
+B. The first least squares model is regressed on all independent variables that are available. All other models have some method for reducing the variance of found coefficients. These other models may seem a bit more biased during training, but should predict better with unseen input data and be more interpretable (especially in case of multicollinearity). The test set is unseen data, and the full least squares model nevertheless performs quite well on it. It is not much harder to interpret either -- the subset of variables used in 6 is not much smaller (`best_5cv_n` vs 13, only AGE and INDUS are left out), and the coefficients of the ridge and least squares regressions are very similar even with our large `ridge_gcv_lambda`.
+
+```{r}
+best_5cv_n
+ridge_gcv_lambda
+round(cbind("Full least squares" = coef(lmf), "Ridge" = coef(ridge), 
+      ".2 tr mean" = c(NA, apply(data[, -14], 2, mean, trim = .2)), 
+      "Std dev" = c(NA, apply(data[, -14], 2, sd)),
+      "Ridge * mean.2" =  coef(ridge) * c(NA, apply(data[, -14], 2, 
+                                                        mean, trim = .2))), 2)
+```
+
+Since it is not done elsewhere, a brief interpretation of these coefficients seems appropriate. Remarking on statistical significance of linear relations between variables may require meeting all linear model assumptions, but we can see what influences the predictions of our models. Note that the coefficients are not normalized, and therefore that the last three columns may be useful.
+
+We see that many of the provided variables can have a negative influence on house price, most notably DIS, NOX, PTRATIO and LSTAT (the latter four  have relatively high variance). RM, RAD, B, and CHAS are influential in predicting higher house prices. B (i.e. $1000(B_k - 0.63)^2$ where $B_k$ is the proportion of blacks by town) has, subjectively, the most surprising influence on prediction.
+
+C. The unadjusted $R^2$ values when predicting "median value of owner-occupied homes in \$1000's" on (unseen) test data shown above are all around .7. This is equivalent to saying the models explain around 70% of the variance of MEDV. 
+
+```{r}
+plot(sort(test$MEDV), pch = 20, type = "l")
+lines(sort(lmf_predictions), col = "yellow")
+lines(sort(subset_predictions), col = "red")
+lines(sort(ridge_predictions), col = "blue")
+lines(sort(lasso_predictions), col = "green")
+```
+
+It is again subjective, but I think these models are useful -- especially in non-extreme cases. 
+
+D. The 5-fold cross-validation error is a bit lower than the test error. This was _not_ inevitable. CV error is only a much better estimate of test error than training error (which was around 20) -- we no longer evaluate our fit on data used to come up with the fit. 
+
+```{r}
+lmf_mse
+lmf_5cv_mse
+```
+
+
+
+

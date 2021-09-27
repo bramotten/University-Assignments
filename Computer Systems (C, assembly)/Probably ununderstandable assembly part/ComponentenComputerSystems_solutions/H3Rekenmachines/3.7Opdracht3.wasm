@@ -1,0 +1,7 @@
+@include "Rekenmachine_II.wasm" # Deze regel altijd toevoegen 
+
+.data MyData : REGISTERS # Het programma start met data in registers 
+1: WORD 100
+
+.code MyCode : REKENMACHINE_II, MyData # Hier begint het programma
+SUBI $1, $1, 103	# subtract 103

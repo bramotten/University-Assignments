@@ -1,0 +1,121 @@
+ vardecomposition <- function(x, intercept = T)
+{
+        #computes the matrix of variance decomposition proportions
+        #of the regression coefficients for linear regression with
+	#x as regression matrix 
+	#when intercept=T, a column of 1s is added as first column to x
+        #value is a matrix with first column:
+        #   vector of  condition-indices of x
+        #   the other columns form the
+        #   matrix of variance decomposition proportions
+        #   of the  regression coefficients.
+        #the  rows of the vector correspond with 
+	  #those of the matrix
+        #
+        if(is.matrix(x)) n <- nrow(x) else n <- dim(x)[1]
+        if(intercept)
+                X <- cbind(rep(1., n), x)
+        else {
+                if(is.matrix(x))
+                        X <- x
+                else X <- matrix(x, n, 1.)
+        }
+        p <- ncol(X)
+        PI <- matrix(0., p, p)
+        FI <- matrix(0., p, p)
+        sumFI <- numeric(p)
+        SVD <- svd(X)
+        for(j in 1.:p)
+                FI[, j] <- (SVD$v[, j])^2./((SVD$d[j])^2.)
+        for(k in 1.:p)
+                sumFI[k] <- sum(FI[k,  ])
+        for(j in 1.:p)
+                PI[j,  ] <- FI[, j]/sumFI
+        cond <- conditionindices(x, intercept)
+        y <- cbind(cond, PI)
+        if(intercept)
+                dimnames(y) <- list(NULL, c("conditionindices", 0.:(p - 1.)))
+        else dimnames(y) <- list(NULL, c("conditionindices", 1.:p))
+        y
+}
+
+ varianceinflation <- function(x, intercept = T)
+{
+        #computes variance inflation factors for linear regression with
+	  #x as regression matrix
+        #when intercept=T, a column of 1s is added as first column to x
+        #
+        if(is.matrix(x)) n <- nrow(x) else n <- dim(x)[1]
+        if(intercept)
+                X <- cbind(rep(1., n), x)
+        else {
+                if(is.matrix(x))
+                        X <- x
+                else X <- matrix(x, n, 1.)
+        }
+        VIF <- numeric(ncol(X))
+        for(j in 1.:ncol(X))
+                VIF[j] <- 1./(1. - determinationcoef(X[, -(j)], X[, j],
+                        interc = F))
+        if(intercept)
+                VIF[-1.]
+        else VIF
+}
+
+
+
+determinationcoef <- function(x, y, interc = T)
+{
+        z <- lsfit(x, y, intercept = interc)
+        n <- length(y)
+        RSS <- sum((z$resid^2.))
+        SYY <- (n - 1.) * var(y)
+        Det <- (SYY - RSS)/SYY
+        Det
+}
+
+
+ conditionindices <- function(x, intercept = T)
+{
+        #computes condition indices for the matrix x
+        #when intercept=T, a column of 1s is added as first column to x
+        #the largest condition index is equal to the
+        #condition number of x
+	#
+        if(is.matrix(x)) n <- nrow(x) else n <- dim(x)[1]
+        if(intercept)
+                X <- cbind(rep(1., n), x)
+        else {
+                if(is.matrix(x))
+                        X <- x
+                else X <- matrix(x, n, 1.)
+        }
+        y <- max(svd(X)$d)/svd(X)$d
+        y
+}
+
+
+lm.norm.test = function(x, y, B = 1000.)
+{
+  #computes bootstrap values D* for the Kolmogorov Smirnov test 
+  #statistic D based on the normal distribution with mean=0 and 
+  #variance=var(residuals) under the null hypothesis of truly 
+  #normal distributed errors in a simple linear regression model
+  #     
+  lmxy = lm(y~x)
+  n = length(y)
+  a = coef(lmxy)[1]
+  b = coef(lmxy)[2]
+  res = residuals(lmxy)
+  s = summary(lmxy)[[6]]
+  bootval = numeric(B)
+  for(j in 1.:B) {
+    e = rnorm(n, 0., s)
+    yboot = a + b * x + e
+    lmboot = lm(yboot~x)
+    resboot = residuals(lmboot)
+    sboot = summary(lmboot)[[6]]
+    bootval[j] = ks.test(resboot, pnorm, 0., sboot)[[1]]
+  }
+  bootval
+}

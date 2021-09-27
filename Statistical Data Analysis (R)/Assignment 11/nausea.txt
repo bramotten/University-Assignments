@@ -1,0 +1,6 @@
+"Number of Patients" "Incidence of Nausea"
+"Placebo" 165 95
+"Chlorpromazine" 152 52
+"Dimenhydrinate" 85 52
+"Pentobarbital(100mg)" 67 35
+"Pentobarbital(150mg)" 85 37
